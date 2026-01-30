@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 商業報告終極版)</title>
+    <title>全方位財富保障系統 Pro (2026 完美結案版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@
     <div id="loading-overlay">
         <div class="spinner"></div>
         <div class="text-2xl font-bold tracking-widest">報告生成中</div>
-        <p class="text-sm text-gray-400 mt-2">正在進行排版與數據視覺化...</p>
+        <p class="text-sm text-gray-400 mt-2">正在繪製圖表與排版，請稍候...</p>
     </div>
 
     <canvas id="hidden-chart-canvas" width="1600" height="800" style="position:fixed; left:-9999px;"></canvas>
@@ -425,14 +425,12 @@
         function addFlowRow(type, name, amount) { const tbody = document.getElementById(type + '-body'); const tr = document.createElement('tr'); const masterList = type === 'income' ? ['薪資收入', '年終獎金', '股利', '租金', '兼職', '投資', '其他'] : ['生活開銷', '交通', '房貸/房租', '保險', '孝親費', '教育', '娛樂', '雜支', '其他']; let opts = masterList.map(o => `<option value="${o}">${o}</option>`).join(''); tr.innerHTML = `<td data-label="項目"><select class="form-input ${type}-select" onchange="saveData()">${opts}</select></td><td data-label="金額"><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll();saveData()" onchange="saveData()"></td><td class="action-col"><button onclick="this.closest('tr').remove();calculateAll();saveData()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button></td>`; tbody.appendChild(tr); if(name) { const sel = tr.querySelector('select'); if(![...sel.options].some(o => o.value === name)) { const o = document.createElement('option'); o.value = name; o.text = name; sel.add(o); } sel.value = name; } if(amount) tr.querySelector('input').value = amount; }
         function updateExpenseRow(name, val) { if (!val || val === 0) return; let found = false; document.querySelectorAll('#expense-body tr').forEach(row => { if(row.querySelector('select')?.value === name) { row.querySelector('input').value = Math.round(val); found = true; } }); if (!found) addFlowRow('expense', name, Math.round(val)); }
 
-        // --- 核心：報告生成 (商業級 A4 優化版) ---
         async function generateReport() {
             calculateAll();
             const overlay = document.getElementById('loading-overlay');
             overlay.style.display = 'flex';
 
             try {
-                // 1. 數據準備
                 const name = document.getElementById('main-name').value || '貴賓';
                 const date = new Date().toLocaleDateString('zh-TW');
                 const clean = str => parseFloat(String(str).replace(/,/g, '').replace(/[^\d.-]/g, '')) || 0;
@@ -453,14 +451,14 @@
 
                 const chartImg = await generateChartAsync(deathNeed, labor, group, comm);
 
+                // --- 專家建議 (放大排版) ---
                 let suggestionHTML = '';
                 if (net > 0) {
-                    suggestionHTML = `<div style="margin-bottom:20px;"><strong style="color:#059669;font-size:18px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:5px;opacity:0.8;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div style="background:#f8fafc;padding:20px;border-radius:8px;border-left:5px solid #0f172a;"><strong style="color:#0f172a;">💡 專家規劃建議</strong><ol style="margin-top:10px;margin-left:20px;line-height:1.8;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ol></div>`;
+                    suggestionHTML = `<div style="margin-bottom:20px;"><strong style="color:#059669;font-size:22px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:10px;opacity:0.8;font-size:16px;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div style="background:#f8fafc;padding:30px;border-radius:12px;border-left:6px solid #0f172a;"><strong style="color:#0f172a;font-size:20px;">💡 專家規劃建議</strong><ol style="margin-top:15px;margin-left:25px;line-height:2.0;font-size:18px;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ol></div>`;
                 } else {
-                    suggestionHTML = `<div style="margin-bottom:20px;"><strong style="color:#dc2626;font-size:18px;">🔴 財務健康診斷：需要調整</strong><p style="margin-top:5px;opacity:0.8;">目前的年度收支呈現緊繃狀態。理財的第一步是「收支平衡」，這將是我們首要解決的課題。</p></div><div style="background:#fff1f2;padding:20px;border-radius:8px;border-left:5px solid #dc2626;"><strong style="color:#991b1b;">💡 專家規劃建議</strong><ol style="margin-top:10px;margin-left:20px;line-height:1.8;"><li><strong>現金流檢視</strong>：協助您檢視支出明細，找出調整空間。</li><li><strong>基礎保障優先</strong>：在預算有限下，優先規劃高槓桿的定期壽險與實支實付。</li><li><strong>風險轉嫁</strong>：避免因突發疾病導致家庭財務崩潰，保障是為了留住每一分錢。</li></ol></div>`;
+                    suggestionHTML = `<div style="margin-bottom:20px;"><strong style="color:#dc2626;font-size:22px;">🔴 財務健康診斷：需要調整</strong><p style="margin-top:10px;opacity:0.8;font-size:16px;">目前的年度收支呈現緊繃狀態。理財的第一步是「收支平衡」，這將是我們首要解決的課題。</p></div><div style="background:#fff1f2;padding:30px;border-radius:12px;border-left:6px solid #dc2626;"><strong style="color:#991b1b;font-size:20px;">💡 專家規劃建議</strong><ol style="margin-top:15px;margin-left:25px;line-height:2.0;font-size:18px;"><li><strong>現金流檢視</strong>：協助您檢視支出明細，找出調整空間。</li><li><strong>基礎保障優先</strong>：在預算有限下，優先規劃高槓桿的定期壽險與實支實付。</li><li><strong>風險轉嫁</strong>：避免因突發疾病導致家庭財務崩潰，保障是為了留住每一分錢。</li></ol></div>`;
                 }
 
-                // 2. 商業報告 HTML 模板 (A4 強制分頁)
                 const htmlContent = `
                     <html>
                     <head>
@@ -468,64 +466,38 @@
                         <style>
                             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
                             body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; background: #e5e5e5; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                            
-                            /* A4 紙張設定 */
                             .page { width: 210mm; height: 296mm; background: white; margin: 0 auto; position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.1); overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
-                            
-                            /* 封面樣式 */
                             .cover-page { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; justify-content: center; padding: 40mm; }
                             .cover-title-group { border-left: 8px solid #d4af37; padding-left: 30px; }
-                            
-                            /* 內頁通用 */
                             .content-page { padding: 20mm; color: #334155; }
                             .header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 30px; font-size: 12px; color: #94a3b8; }
                             .page-title { font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 25px; border-left: 6px solid #d4af37; padding-left: 15px; display: flex; align-items: center; }
-                            
-                            /* 卡片網格 */
                             .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
                             .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
                             .stat-card { background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
                             .stat-label { font-size: 13px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
                             .stat-value { font-size: 20px; font-weight: 900; color: #0f172a; }
-                            
-                            /* 表格優化 */
-                            .biz-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
-                            .biz-table th { text-align: left; padding: 10px; background: #f1f5f9; color: #475569; border-bottom: 2px solid #94a3b8; }
-                            .biz-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
-                            
-                            /* Footer */
+                            .biz-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; }
+                            .biz-table th { text-align: left; padding: 12px; background: #f1f5f9; color: #475569; border-bottom: 2px solid #94a3b8; }
+                            .biz-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
                             .footer { position: absolute; bottom: 15mm; left: 20mm; right: 20mm; text-align: center; font-size: 10px; color: #cbd5e1; border-top: 1px solid #f1f5f9; padding-top: 10px; }
-
-                            @media print {
-                                body { background: white; }
-                                .page { margin: 0; box-shadow: none; width: 210mm; height: 296mm; }
-                            }
+                            @media print { body { background: white; } .page { margin: 0; box-shadow: none; width: 210mm; height: 296mm; } }
                         </style>
                     </head>
                     <body>
                         <div class="page cover-page">
-                            <div class="cover-title-group">
-                                <div style="font-size: 20px; opacity: 0.8; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase;">Your wealth guidance to the future</div>
-                                <h1 style="font-size: 56px; font-weight: 900; line-height: 1.1; margin: 0;">全方位<br>財富保障報告</h1>
-                            </div>
-                            <div style="margin-top: 80px; padding-left: 38px;">
-                                <p style="font-size: 14px; opacity: 0.6; letter-spacing: 1px;">PREPARED FOR</p>
-                                <h2 style="font-size: 32px; margin: 5px 0 20px 0;">${name} 貴賓</h2>
-                                <p style="font-size: 14px; opacity: 0.8;">報告日期：${date}</p>
-                            </div>
+                            <div class="cover-title-group"><div style="font-size: 20px; opacity: 0.8; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase;">Your wealth guidance to the future</div><h1 style="font-size: 56px; font-weight: 900; line-height: 1.1; margin: 0;">全方位<br>財富保障報告</h1></div>
+                            <div style="margin-top: 80px; padding-left: 38px;"><p style="font-size: 14px; opacity: 0.6; letter-spacing: 1px;">PREPARED FOR</p><h2 style="font-size: 32px; margin: 5px 0 20px 0;">${name} 貴賓</h2><p style="font-size: 14px; opacity: 0.8;">報告日期：${date}</p></div>
                         </div>
-
                         <div class="page content-page">
                             <div class="header"><span>全方位財富保障系統</span><span>${date}</span></div>
                             <div class="page-title">風險缺口總覽</div>
-                            
                             <div class="grid-4">
                                 <div class="stat-card"><div class="stat-label">醫療缺口</div><div class="stat-value" style="color:#ef4444">${parseFloat(sickGap).toLocaleString()} 萬</div></div>
                                 <div class="stat-card"><div class="stat-label">失能月缺口</div><div class="stat-value" style="color:#f59e0b">${disGap}</div></div>
                                 <div class="stat-card"><div class="stat-label">身故缺口</div><div class="stat-value" style="color:#0f172a">${deathGap}</div></div>
                                 <div class="stat-card" style="background:#fffbeb; border-color:#d4af37"><div class="stat-label" style="color:#b45309">退休年儲蓄</div><div class="stat-value" style="color:#d97706">${retireGap}</div></div>
                             </div>
-
                             <div style="background:#0f172a; color:white; padding:8px 15px; font-weight:bold; border-radius:4px; margin-bottom:10px; font-size:14px;">身故保障結構分析</div>
                             <table class="biz-table">
                                 <tr><th width="30%">項目</th><th width="30%">預估金額</th><th>備註</th></tr>
@@ -535,70 +507,40 @@
                                 <tr><td>(-) 商業壽險</td><td style="color:#059669;">- ${parseFloat(comm).toLocaleString()} 萬</td><td>既有保單</td></tr>
                                 <tr style="background:#fee2e2;"><td style="color:#b91c1c;font-weight:bold;">需增補缺口</td><td style="color:#b91c1c;font-weight:bold;">${deathGap}</td><td>建議優先補足</td></tr>
                             </table>
-
                             <div style="margin-top:20px; border:1px solid #e2e8f0; padding:15px; border-radius:8px;">
                                 <div style="font-weight:bold; margin-bottom:15px; color:#475569; text-align:center;">家庭責任與保障走勢圖</div>
                                 <img src="${chartImg}" style="width:100%; height:320px; object-fit:contain;">
                             </div>
-                            
                             <div class="footer">本報告僅供參考，實際理賠金額以保單條款為準 • 第 1 頁</div>
                         </div>
-
                         <div class="page content-page" style="page-break-after: avoid;">
                             <div class="header"><span>全方位財富保障系統</span><span>${date}</span></div>
                             <div class="page-title">財務收支與建議</div>
-
                             <div class="grid-2" style="margin-bottom:20px;">
-                                <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                                    <div style="background:#059669; color:white; padding:10px; font-weight:bold; text-align:center;">年度收入</div>
-                                    <div style="padding:20px; text-align:center; font-size:28px; font-weight:bold; color:#059669;">${parseFloat(inc).toLocaleString()} <span style="font-size:16px;color:#64748b">萬</span></div>
-                                </div>
-                                <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                                    <div style="background:#dc2626; color:white; padding:10px; font-weight:bold; text-align:center;">年度支出</div>
-                                    <div style="padding:20px; text-align:center; font-size:28px; font-weight:bold; color:#dc2626;">${parseFloat(exp).toLocaleString()} <span style="font-size:16px;color:#64748b">萬</span></div>
-                                </div>
+                                <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;"><div style="background:#059669; color:white; padding:10px; font-weight:bold; text-align:center;">年度收入</div><div style="padding:20px; text-align:center; font-size:28px; font-weight:bold; color:#059669;">${parseFloat(inc).toLocaleString()} <span style="font-size:16px;color:#64748b">萬</span></div></div>
+                                <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;"><div style="background:#dc2626; color:white; padding:10px; font-weight:bold; text-align:center;">年度支出</div><div style="padding:20px; text-align:center; font-size:28px; font-weight:bold; color:#dc2626;">${parseFloat(exp).toLocaleString()} <span style="font-size:16px;color:#64748b">萬</span></div></div>
                             </div>
-
-                            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-                                <span style="font-weight:bold; color:#475569; font-size:16px;">年度淨現金流 (結餘)</span>
-                                <span style="font-size:32px; font-weight:900; color:${net>=0 ? '#0f172a' : '#dc2626'}">${netFmt} 萬</span>
-                            </div>
-
+                            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;"><span style="font-weight:bold; color:#475569; font-size:16px;">年度淨現金流 (結餘)</span><span style="font-size:32px; font-weight:900; color:${net>=0 ? '#0f172a' : '#dc2626'}">${netFmt} 萬</span></div>
                             ${suggestionHTML}
-
                             <div class="footer">本報告僅供參考，實際理賠金額以保單條款為準 • 第 2 頁</div>
                         </div>
                     </body>
-                    </html>
-                `;
+                    </html>`;
 
                 const newWin = window.open('', '_blank');
                 if(!newWin) throw new Error("請允許彈出視窗以列印報告");
                 newWin.document.write(htmlContent);
                 newWin.document.close();
-                
-                newWin.onload = function() {
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        newWin.focus();
-                        newWin.print();
-                    }, 500);
-                };
-
-            } catch (e) {
-                alert('報告產出失敗：' + e.message);
-                overlay.style.display = 'none';
-            }
+                newWin.onload = function() { setTimeout(() => { overlay.style.display = 'none'; newWin.focus(); newWin.print(); }, 500); };
+            } catch (e) { alert('報告產出失敗：' + e.message); overlay.style.display = 'none'; }
         }
 
-        // Chart 生成 (解析度優化)
+        // --- Chart 生成 (包含智慧標註) ---
         function generateChartAsync(needVal, laborVal, groupVal, commVal) {
             return new Promise((resolve) => {
                 const canvas = document.getElementById('hidden-chart-canvas');
                 const ctx = canvas.getContext('2d');
-                // 重設 Canvas 尺寸以確保高解析度
-                canvas.width = 1600;
-                canvas.height = 800;
+                canvas.width = 1600; canvas.height = 800;
 
                 const age = parseInt(document.getElementById('main-user-age-value').value) || 30;
                 const retireAgeVal = document.getElementById('retire-target-age').value;
@@ -629,19 +571,49 @@
                         ]
                     },
                     options: {
-                        animation: {
-                            onComplete: function() { resolve(canvas.toDataURL()); }
-                        },
+                        animation: { onComplete: function() { resolve(canvas.toDataURL()); } },
                         responsive: false,
-                        devicePixelRatio: 2, // 提高清晰度
+                        devicePixelRatio: 2,
                         plugins: {
-                            legend: { labels: { font: { size: 24 } } } // 放大圖例
+                            legend: { labels: { font: { size: 24 } } }
                         },
                         scales: {
                             x: { ticks: { font: { size: 18 } } },
                             y: { beginAtZero: true, ticks: { font: { size: 18 } } }
                         }
-                    }
+                    },
+                    // [插件] 智慧標註缺口
+                    plugins: [{
+                        id: 'gapLabel',
+                        afterDatasetsDraw: (chart) => {
+                            const ctx = chart.ctx;
+                            chart.data.datasets.forEach((dataset, i) => {
+                                if (dataset.label === '家庭責任遞減') {
+                                    const meta = chart.getDatasetMeta(i);
+                                    meta.data.forEach((bar, index) => {
+                                        // 邏輯：第一年 (index===0) 或 年齡為5的倍數
+                                        const currentAge = labels[index];
+                                        const isTargetYear = (index === 0) || (currentAge % 5 === 0);
+                                        
+                                        if (isTargetYear) {
+                                            const need = dataset.data[index];
+                                            const exist = existData[index];
+                                            const gap = need - exist;
+
+                                            if (gap > 0) {
+                                                ctx.save();
+                                                ctx.fillStyle = '#dc2626'; // 紅色
+                                                ctx.font = 'bold 26px Arial';
+                                                ctx.textAlign = 'center';
+                                                ctx.fillText(gap.toLocaleString(), bar.x, bar.y - 15);
+                                                ctx.restore();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }]
                 });
             });
         }
