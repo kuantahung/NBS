@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 商業旗艦修正版)</title>
+    <title>全方位財富保障系統 Pro (2026 最終修訂版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -335,7 +335,7 @@
         const DEFAULT_CONFIG = { 'pub-k12': 10, 'pri-k12': 30, 'pub-uni': 25, 'pri-uni': 50, 'pub-mas': 30, 'pri-mas': 60 };
         let CONFIG = { ...DEFAULT_CONFIG };
 
-        // Social Insurance Data with official table URLs
+        // Social Insurance Data with corrected official table URLs
         const SI_DATA = {
             labor: { 
                 label: '勞保身故給付', 
@@ -345,6 +345,7 @@
             gov: { 
                 label: '公保死亡給付', 
                 note: '* 依未滿20年投保年資(30個月)保守估算', 
+                // 新的公保連結
                 tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' 
             },
             farmer: { 
@@ -366,6 +367,12 @@
             if(document.getElementById('income-body').children.length === 0) addFlowRow('income');
             if(document.getElementById('expense-body').children.length === 0) addFlowRow('expense');
             calculateAll();
+            
+            // 強制執行一次更新，確保預設為勞保
+            if(!document.getElementById('si-type').value) {
+                document.getElementById('si-type').value = 'labor';
+            }
+            updateSocialInsurance();
         }
 
         function updateSocialInsurance() {
@@ -487,9 +494,14 @@
                     }
                     if(staticData['si-type']) {
                         document.getElementById('si-type').value = staticData['si-type'];
-                        updateSocialInsurance(); // Update link/note
+                    } else {
+                        document.getElementById('si-type').value = 'labor'; // Default fallback
                     }
+                    updateSocialInsurance(); // Update link/note based on loaded or default
                     syncPage2Visibility();
+                } else {
+                    document.getElementById('si-type').value = 'labor';
+                    updateSocialInsurance();
                 }
                 const dynamicData = JSON.parse(localStorage.getItem('pwm_data_dynamic'));
                 if(dynamicData) {
