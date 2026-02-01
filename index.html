@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 完美定稿版)</title>
+    <title>全方位財富保障系統 Pro (2026 國保升級版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -307,6 +307,7 @@
                                     <option value="gov">公保</option>
                                     <option value="farmer">農保</option>
                                     <option value="fisher">漁保</option>
+                                    <option value="national">國保</option>
                                 </select>
                                 <label class="text-xs font-bold text-slate-500 block mb-2">投保薪資 / 保俸 (元/月)</label>
                                 <input type="number" id="labor-salary-p3" class="form-input font-bold persist-input" placeholder="例如: 45800" oninput="calculateAll();saveData()">
@@ -345,7 +346,7 @@
             gov: { 
                 label: '公保死亡給付', 
                 note: '* 依未滿20年投保年資(30個月)保守估算', 
-                // 新的公保連結
+                // Updated URL for Gov Insurance
                 tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' 
             },
             farmer: { 
@@ -358,6 +359,12 @@
                 label: '漁保身故給付', 
                 note: '* 比照勞保甲類會員標準(35個月)估算', 
                 tableUrl: 'https://www.bli.gov.tw/0005475.html' 
+            },
+             national: { 
+                label: '國保喪葬給付', 
+                note: '* 固定月投保金額 19,761元 x 5個月', 
+                fixed: 19761,
+                tableUrl: null 
             }
         };
 
@@ -368,11 +375,8 @@
             if(document.getElementById('expense-body').children.length === 0) addFlowRow('expense');
             calculateAll();
             
-            // 強制執行一次更新，確保預設為勞保
-            if(!document.getElementById('si-type').value) {
-                document.getElementById('si-type').value = 'labor';
-            }
-            // 修正：手動觸發一次以更新連結和備註
+            // FORCE DEFAULT TO LABOR (Override any saved state)
+            document.getElementById('si-type').value = 'labor';
             updateSocialInsurance();
         }
 
@@ -394,14 +398,15 @@
             }
 
             // Handle Fixed Amount
-            if (type === 'farmer') {
-                input.value = 20400;
+            if (type === 'farmer' || type === 'national') {
+                input.value = data.fixed;
                 input.setAttribute('readonly', true);
                 input.classList.add('bg-gray-100');
             } else {
                 input.removeAttribute('readonly');
                 input.classList.remove('bg-gray-100');
-                if (input.value == 20400) input.value = ''; 
+                // Don't auto clear if it was labor, just let user edit
+                if (input.value == 20400 || input.value == 19761) input.value = ''; 
             }
             calculateAll();
             saveData();
@@ -434,6 +439,8 @@
                 siBenefit = Math.round(salary * 30); // Conservative estimate
             } else if (siType === 'farmer') {
                 siBenefit = Math.round(20400 * 15); // Fixed
+            } else if (siType === 'national') {
+                siBenefit = Math.round(19761 * 5); // Fixed
             }
             
             document.getElementById('labor-benefit-val-p3').innerText = fmt(Math.round(siBenefit/10000)); // Display in Wan
@@ -493,12 +500,11 @@
                         const el = document.getElementById(id);
                         if(el) { if(el.type === 'checkbox') el.checked = staticData[id]; else el.value = staticData[id]; }
                     }
-                    // REMOVED LOADING SI-TYPE TO FORCE DEFAULT
-                    /* if(staticData['si-type']) {
-                        document.getElementById('si-type').value = staticData['si-type'];
-                    } */
+                    /* REMOVED LOADING SI-TYPE TO FORCE DEFAULT */
                     updateSocialInsurance(); // Update link/note based on default
                     syncPage2Visibility();
+                } else {
+                    updateSocialInsurance();
                 }
                 const dynamicData = JSON.parse(localStorage.getItem('pwm_data_dynamic'));
                 if(dynamicData) {
@@ -561,7 +567,7 @@
                 
                 // 社保資料抓取 (改用計算後的數據)
                 const siType = document.getElementById('si-type').value;
-                const siLabelMap = { labor: '勞保身故給付', gov: '公保死亡給付', farmer: '農保喪葬津貼', fisher: '漁保身故給付' };
+                const siLabelMap = { labor: '勞保身故給付', gov: '公保死亡給付', farmer: '農保喪葬津貼', fisher: '漁保身故給付', national: '國保喪葬給付' };
                 const siLabel = siLabelMap[siType];
                 const siBenefit = document.getElementById('labor-benefit-val-p3').innerText; // 已經是萬單位
 
