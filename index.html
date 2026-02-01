@@ -3,40 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 Pro (經典視覺還原版)</title>
+    <title>倍安保險需求分析系統 Pro (2026 最終完美版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- 經典視覺風格 (Classic Visuals) --- */
+        /* --- 系統介面樣式 (Web UI) --- */
         body { font-family: 'Microsoft JhengHei', sans-serif; background-color: #f1f5f9; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        
-        /* 漸層背景與毛玻璃特效 */
         .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15); }
-        
         input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         .hidden { display: none !important; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 表格與輸入框 */
+        /* 介面表格與輸入框 */
         .financial-table th { background-color: #f8fafc; color: #475569; padding: 12px; font-size: 0.95rem; border-bottom: 2px solid #e2e8f0; font-weight: 700; white-space: nowrap; }
         .financial-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-        .form-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-size: 1rem; transition: all 0.2s; }
+        .form-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 1rem; transition: all 0.2s; }
         .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); outline: none; }
         
-        /* 社保選單 */
-        .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        /* 社保選單專用樣式 */
+        .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; font-size: 0.95rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
         .si-select:hover { border-color: #3b82f6; }
         
-        /* 連結 */
-        .salary-table-link { font-size: 0.8rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; margin-top: 4px; transition: color 0.2s; }
+        /* 級距表連結樣式 */
+        .salary-table-link { font-size: 0.75rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; margin-top: 4px; transition: color 0.2s; }
         .salary-table-link:hover { color: #1d4ed8; text-decoration: underline; }
-
-        /* 卡片互動 */
-        .need-card { height: 280px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .need-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
 
         /* 手機版適配 */
         @media (max-width: 768px) {
@@ -46,7 +39,6 @@
             .mobile-card-table td::before { content: attr(data-label); float: left; font-weight: bold; color: #64748b; margin-right: 10px; font-size: 1rem; margin-top: 10px;}
             .mobile-card-table input, .mobile-card-table select { width: 100%; }
             .mobile-card-table .action-col { text-align: right; margin-top: 15px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }
-            .need-card { height: 220px; }
         }
 
         /* Loading & Modal */
@@ -58,6 +50,9 @@
         #settings-modal:not(.hidden) { opacity: 1; pointer-events: auto; }
         .highlight-update { animation: highlight 1s ease; }
         @keyframes highlight { 0% { background-color: #fef3c7; } 100% { background-color: #ffffff; } }
+        .need-card { height: 280px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .need-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        @media (min-width: 768px) { .need-card { height: 280px; } } 
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans" onload="initSystem()">
@@ -98,10 +93,7 @@
         <div id="page1" class="container mx-auto py-6 px-4 md:py-10">
             <div class="max-w-6xl mx-auto glass-card shadow-2xl rounded-3xl overflow-hidden border border-white">
                 <div class="gradient-bg p-6 md:p-8 text-white flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl md:text-3xl font-black">倍安保險需求分析系統</h1>
-                        <p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p>
-                    </div>
+                    <div><h1 class="text-2xl md:text-3xl font-black">倍安保險需求分析系統</h1><p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p></div>
                     <div class="flex items-center gap-3">
                         <button onclick="clearAllData()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center backdrop-blur-sm border border-white/20" title="清空所有欄位">
                             <i class="fas fa-trash-alt mr-2"></i>清除
@@ -119,7 +111,18 @@
                         </div>
                         <div id="family-container" class="space-y-4">
                             <div id="main-user-row" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-sm" data-relation="本人">
-                                <div class="md:col-span-2"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">關係</label><input type="text" value="本人" readonly class="w-full bg-white rounded-lg p-3 text-center font-bold text-slate-700 border border-slate-200"></div>
+                                <div class="md:col-span-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">關係</label>
+                                    <select id="main-relation" class="form-input bg-white font-bold text-slate-700">
+                                        <option value="本人" selected>本人</option>
+                                        <option value="配偶">配偶</option>
+                                        <option value="子">子</option>
+                                        <option value="女">女</option>
+                                        <option value="父">父</option>
+                                        <option value="母">母</option>
+                                        <option value="祖父母">祖父母</option>
+                                    </select>
+                                </div>
                                 <div class="md:col-span-3"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">姓名</label><input type="text" id="main-name" placeholder="請輸入姓名" class="form-input name-input persist-input" onchange="saveData()"></div>
                                 <div class="md:col-span-4"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">出生年月日</label><input type="date" id="main-dob" onchange="updateAge(this); saveData()" class="form-input dob-input persist-input"></div>
                                 <div class="md:col-span-3"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">保險年齡</label><div id="main-user-age-display" class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 text-lg border border-slate-200 age-display">-- 歲</div><input type="hidden" id="main-user-age-value" value="0"></div>
@@ -130,57 +133,42 @@
                     <section class="mb-10">
                         <h2 class="text-xl font-bold border-l-4 border-slate-700 pl-3 mb-6 text-slate-800">核心擔憂與目標 (請勾選)</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
+                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group hover:shadow-2xl transition-all duration-300">
                                 <input type="checkbox" id="check-sick" class="hidden peer persist-input" onchange="saveData()">
                                 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://images.unsplash.com/photo-1538108149393-fbbd81895907?q=80&w=600');"></div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent peer-checked:from-blue-900/95 peer-checked:via-blue-900/60"></div>
-                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl drop-shadow-md"></i></div>
-                                <div class="relative h-full flex flex-col justify-end p-8 text-white">
-                                    <h3 class="text-5xl font-black mb-2 tracking-tighter">病</h3>
-                                    <p class="text-lg font-bold opacity-90">高端醫療品質</p>
-                                </div>
-                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-blue-400 rounded-3xl pointer-events-none transition-all"></div>
+                                <div class="absolute inset-0 bg-black/40 peer-checked:bg-blue-900/80 transition-all"></div>
+                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl"></i></div>
+                                <div class="relative h-full flex flex-col justify-end p-8 text-white"><h3 class="text-6xl font-black mb-2 tracking-tighter">病</h3><p class="text-xl font-bold opacity-90">高端醫療品質</p></div>
+                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-blue-400 rounded-3xl pointer-events-none"></div>
                             </label>
-                            
-                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
+                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group hover:shadow-2xl transition-all duration-300">
                                 <input type="checkbox" id="check-disability" class="hidden peer persist-input" onchange="saveData()">
                                 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600');"></div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent peer-checked:from-amber-900/95 peer-checked:via-amber-900/60"></div>
-                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl drop-shadow-md"></i></div>
-                                <div class="relative h-full flex flex-col justify-end p-8 text-white">
-                                    <h3 class="text-5xl font-black mb-2 tracking-tighter">殘</h3>
-                                    <p class="text-lg font-bold opacity-90">失能長照防護</p>
-                                </div>
-                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-amber-400 rounded-3xl pointer-events-none transition-all"></div>
+                                <div class="absolute inset-0 bg-black/40 peer-checked:bg-amber-900/80 transition-all"></div>
+                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl"></i></div>
+                                <div class="relative h-full flex flex-col justify-end p-8 text-white"><h3 class="text-6xl font-black mb-2 tracking-tighter">殘</h3><p class="text-xl font-bold opacity-90">失能長照防護</p></div>
+                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-amber-400 rounded-3xl pointer-events-none"></div>
                             </label>
-
-                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
+                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group hover:shadow-2xl transition-all duration-300">
                                 <input type="checkbox" id="check-death" class="hidden peer persist-input" onchange="saveData()">
                                 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://images.unsplash.com/photo-1475483768296-6163e08872a1?q=80&w=600');"></div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent peer-checked:from-rose-900/95 peer-checked:via-rose-900/60"></div>
-                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl drop-shadow-md"></i></div>
-                                <div class="relative h-full flex flex-col justify-end p-8 text-white">
-                                    <h3 class="text-5xl font-black mb-2 tracking-tighter">死</h3>
-                                    <p class="text-lg font-bold opacity-90">家庭責任傳承</p>
-                                </div>
-                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-rose-400 rounded-3xl pointer-events-none transition-all"></div>
+                                <div class="absolute inset-0 bg-black/40 peer-checked:bg-rose-900/80 transition-all"></div>
+                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl"></i></div>
+                                <div class="relative h-full flex flex-col justify-end p-8 text-white"><h3 class="text-6xl font-black mb-2 tracking-tighter">死</h3><p class="text-xl font-bold opacity-90">家庭責任傳承</p></div>
+                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-rose-400 rounded-3xl pointer-events-none"></div>
                             </label>
-
-                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
+                            <label class="relative need-card rounded-3xl overflow-hidden shadow-lg cursor-pointer group hover:shadow-2xl transition-all duration-300">
                                 <input type="checkbox" id="check-retire" class="hidden peer persist-input" onchange="saveData()">
                                 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600');"></div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent peer-checked:from-emerald-900/95 peer-checked:via-emerald-900/60"></div>
-                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl drop-shadow-md"></i></div>
-                                <div class="relative h-full flex flex-col justify-end p-8 text-white">
-                                    <h3 class="text-5xl font-black mb-2 tracking-tighter">老</h3>
-                                    <p class="text-lg font-bold opacity-90">退休財富自由</p>
-                                </div>
-                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-emerald-400 rounded-3xl pointer-events-none transition-all"></div>
+                                <div class="absolute inset-0 bg-black/40 peer-checked:bg-emerald-900/80 transition-all"></div>
+                                <div class="absolute top-6 right-6 text-white opacity-0 peer-checked:opacity-100 transition-all scale-0 peer-checked:scale-100"><i class="fas fa-check-circle text-4xl"></i></div>
+                                <div class="relative h-full flex flex-col justify-end p-8 text-white"><h3 class="text-6xl font-black mb-2 tracking-tighter">老</h3><p class="text-xl font-bold opacity-90">退休財富自由</p></div>
+                                <div class="absolute inset-0 border-4 border-transparent peer-checked:border-emerald-400 rounded-3xl pointer-events-none"></div>
                             </label>
                         </div>
                     </section>
 
-                    <button onclick="togglePages('page2')" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-xl hover:bg-slate-900 shadow-xl transition transform hover:-translate-y-1">下一步：需求量化分析</button>
+                    <button onclick="togglePages('page2')" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-900 shadow-xl transition transform hover:-translate-y-1">下一步：需求量化分析</button>
                 </div>
             </div>
         </div>
@@ -430,6 +418,7 @@
                 if(input.type === 'checkbox' || input.type === 'radio') input.checked = false;
                 else input.value = '';
             });
+            // Reset Selects but keep main-relation default
             document.querySelectorAll('select:not(#si-type)').forEach(select => select.selectedIndex = 0);
             
             document.getElementById('parents-container').innerHTML = '';
@@ -656,12 +645,12 @@
                             .chart-container { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
                             .chart-title { text-align: center; font-weight: bold; color: #475569; margin-bottom: 10px; }
                             .chart-img { width: 100%; height: 100%; object-fit: contain; max-height: 400px; }
-                            .split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; height: 100%; }
-                            .fin-left { display: flex; flex-direction: column; gap: 20px; }
-                            .fin-right { display: flex; flex-direction: column; }
-                            .fin-dashboard { background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
+                            .split-layout-v { display: flex; flex-direction: column; height: 100%; gap: 30px; } 
+                            .fin-top { display: flex; gap: 20px; }
+                            .fin-bottom { flex: 1; display: flex; flex-direction: column; }
+                            .fin-dashboard { background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; flex: 1; }
                             .fin-score { font-size: 36px; font-weight: 900; color: ${net>=0 ? '#059669' : '#dc2626'}; margin: 10px 0; }
-                            .advice-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+                            .advice-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
                             .footer { height: 12mm; border-top: 1px solid #e2e8f0; margin: 0 20mm; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #94a3b8; flex-shrink: 0; }
                         </style>
                     </head>
@@ -675,7 +664,7 @@
                                 </div>
                                 <div style="margin-top: 80px; padding-left: 38px;">
                                     <p style="font-size: 14px; opacity: 0.6; letter-spacing: 1px;">PREPARED FOR</p>
-                                    <h2 style="font-size: 32px; margin: 5px 0 20px 0;">${name} <span style="font-size:20px; font-weight:300;">先生/小姐</span></h2>
+                                    <h2 style="font-size: 36px; margin: 5px 0 20px 0; font-weight: 700;">${name} <span style="font-size: 18px; font-weight: 300;">先生/小姐</span></h2>
                                     <p style="font-size: 14px; opacity: 0.8;">報告日期：${date}</p>
                                 </div>
                             </div>
@@ -683,12 +672,12 @@
                         <div class="page">
                             <div class="header-bar">
                                 <span style="font-weight:300; font-size:16px; color:#fcd34d;">Polaris Financial Group</span>
-                                <span class="header-right" style="color:white; text-align:right;">
-                                    <span style="font-weight:900;">風險分析</span> <span style="font-weight:300;">Risk Analysis</span>
-                                </span>
+                                <div style="color:white; text-align:right;">
+                                    <div style="font-weight:700; font-size:18px; line-height:1.2;">風險分析</div>
+                                    <div style="font-weight:300; font-size:9px; letter-spacing:2px;">RISK ANALYSIS</div>
+                                </div>
                             </div>
                             <div class="content">
-                                <div class="page-title">風險缺口總覽</div>
                                 <div class="dashboard">
                                     <div class="metric-card" style="border-color:#ef4444"><div class="metric-title">醫療缺口</div><div class="metric-val" style="color:#ef4444">${parseFloat(sickGap).toLocaleString()} 萬</div></div>
                                     <div class="metric-card" style="border-color:#f59e0b"><div class="metric-title">失能月缺口</div><div class="metric-val" style="color:#f59e0b">${disGap}</div></div>
@@ -713,9 +702,10 @@
                         <div class="page">
                             <div class="header-bar">
                                 <span style="font-weight:300; font-size:16px; color:#fcd34d;">Polaris Financial Group</span>
-                                <span class="header-right" style="color:white; text-align:right;">
-                                    <span style="font-weight:900;">財務建議</span> <span style="font-weight:300;">Financial Advice</span>
-                                </span>
+                                <div style="color:white; text-align:right;">
+                                    <div style="font-weight:700; font-size:18px; line-height:1.2;">財務建議</div>
+                                    <div style="font-weight:300; font-size:9px; letter-spacing:2px;">FINANCIAL ADVICE</div>
+                                </div>
                             </div>
                             <div class="content">
                                 <div class="split-layout-v">
@@ -731,7 +721,7 @@
                                         </div>
                                     </div>
                                     <div class="fin-bottom">
-                                        <div class="advice-box" style="display:flex; flex-direction:column; justify-content:center;">
+                                        <div class="advice-box">
                                             ${suggestionHTML}
                                         </div>
                                     </div>
