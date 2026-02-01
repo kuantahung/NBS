@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 (2026 最終完美版)</title>
+    <title>倍安保險需求分析系統 (2026 最終除錯版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- 系統核心樣式 --- */
+        /* --- 視覺風格：經典深藍漸層 + 毛玻璃 --- */
         body { font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif; background-color: #f1f5f9; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        
         .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15); }
-
         input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         .hidden { display: none !important; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI 元件 */
         .financial-table th { background-color: #f8fafc; color: #475569; padding: 12px; font-size: 0.95rem; border-bottom: 2px solid #e2e8f0; font-weight: 700; white-space: nowrap; text-align: left; }
         .financial-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         .form-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; font-size: 1rem; transition: all 0.2s; background: white; }
@@ -93,6 +90,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" onclick="clearAllData()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center backdrop-blur-sm border border-white/20 cursor-pointer"><i class="fas fa-trash-alt mr-2"></i>清除</button>
+                        <button type="button" onclick="toggleSettings()" class="text-white/80 hover:text-white transition p-2 cursor-pointer"><i class="fas fa-cog text-xl"></i></button>
                         <div class="text-right opacity-80 text-sm font-mono border-l pl-4 border-white/20">Step 1/3</div>
                     </div>
                 </div>
@@ -166,9 +164,9 @@
                     <h2 class="text-xl md:text-2xl font-black text-slate-800 mb-6 flex items-center"><span class="bg-rose-100 p-2 rounded-lg mr-3 text-rose-600 text-xl">🕊️</span> 身故責任精算</h2>
                     <div class="space-y-8">
                         <div>
-                            <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">父母孝養金</h3><button type="button" onclick="addParentRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增</button></div>
+                            <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">父母孝養金</h3><button onclick="addParentRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增</button></div>
+                            <p class="text-xs text-slate-400 mb-3">* 備註：依內政部112年簡易生命表，男性平均壽命 76.94 歲，女性 84.17 歲。</p>
                             <div id="parents-container" class="space-y-3"></div>
-                            <p class="text-xs text-slate-400 mt-3">* 備註：依內政部112年簡易生命表，男性平均壽命 76.94 歲，女性 84.17 歲。</p>
                             <div class="bg-slate-50 p-4 rounded-xl mt-4 text-right border border-slate-200"><span class="text-slate-600 text-sm font-bold">孝養金小計:</span> <span id="total-parents" class="text-xl font-black text-slate-800 ml-2">0 萬</span></div>
                         </div>
                         <div>
@@ -176,7 +174,7 @@
                              <div class="grid grid-cols-2 gap-6"><div><label class="text-sm font-bold text-slate-500 block mb-2">每月生活費 (萬)</label><input type="number" id="living-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div><div><label class="text-sm font-bold text-slate-500 block mb-2">照顧年數 (年)</label><input type="number" id="living-years" class="form-input" placeholder="例如: 20" onkeyup="calculateAll()"></div></div>
                         </div>
                         <div>
-                             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">子女教育基金 <span class="text-xs font-normal text-slate-400 ml-2">(依教育部參考標準估算)</span></h3><button type="button" onclick="addManualEduRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增子女</button></div>
+                             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">子女教育基金 <span class="text-xs font-normal text-slate-400 ml-2">(依教育部參考標準估算)</span></h3><button onclick="addManualEduRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增子女</button></div>
                              <div id="edu-container" class="space-y-4"></div>
                              <div class="bg-slate-50 p-4 rounded-xl mt-4 text-right border border-slate-200"><span class="text-slate-600 text-sm font-bold">教育金小計:</span> <span id="total-edu" class="text-xl font-black text-slate-800 ml-2">0 萬</span></div>
                         </div>
@@ -367,10 +365,10 @@
                     let y = s.years; if(age >= s.minAge) y = Math.min(s.maxAge - age, s.years);
                     y = Math.max(0, y);
                     const uid = Math.random().toString(36).substr(2,9);
-                    stagesHTML += `<div class="edu-stage-row" data-stage="${s.id}" data-years="${y}"><div class="text-sm font-bold text-slate-600">${s.name} <span class="text-xs text-slate-400">(${y}年)</span></div><div><input type="radio" name="edu_${uid}" value="public" id="pub_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()"><label for="pub_${uid}" class="edu-toggle-label">公立</label></div><div><input type="radio" name="edu_${uid}" value="private" id="pri_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()" checked><label for="pri_${uid}" class="edu-toggle-label">私立</label></div></div>`;
+                    stagesHTML += `<div class="edu-stage-row" data-stage="${s.id}" data-years="${y}"><div class="text-sm font-bold text-slate-600">${s.name} <span class="text-xs text-slate-400">(${y}年)</span></div><div><input type="radio" name="edu_${uid}" value="pub" id="pub_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()"><label for="pub_${uid}" class="edu-toggle-label">公立</label></div><div><input type="radio" name="edu_${uid}" value="pri" id="pri_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()" checked><label for="pri_${uid}" class="edu-toggle-label">私立</label></div></div>`;
                 }
             });
-            if(hasStage) document.getElementById('edu-container').insertAdjacentHTML('beforeend', `<div class="edu-child-card bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4"><div class="flex justify-between font-bold text-slate-700 mb-2 border-b pb-2"><span>${name} (${age}歲)</span><span class="text-blue-600">小計: <span class="child-subtotal">0</span> 萬</span></div>${stagesHTML}</div>`);
+            if(hasStage) document.getElementById('edu-container').insertAdjacentHTML('beforeend', `<div class="edu-child-card bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4"><div class="flex justify-between font-bold text-slate-700 mb-2 border-b pb-2"><span>${name} (${age}歲)</span><div class="flex items-center"><span class="text-blue-600 mr-4">小計: <span class="child-subtotal">0</span> 萬</span><button onclick="this.closest('.edu-child-card').remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt"></i></button></div></div>${stagesHTML}</div>`);
         }
 
         function addManualEduRow() {
@@ -412,9 +410,13 @@
                 let sub=0; 
                 card.querySelectorAll('.edu-toggle-input:checked').forEach(input => { 
                     const stage=input.name.split('_')[1]; 
-                    const type=input.value.split('_')[0]; 
-                    const years=parseFloat(input.value.split('_')[1]); 
-                    sub += (type==='public'?CONFIG['pub-'+stage]:CONFIG['pri-'+stage]) * years; 
+                    const type=input.value; // 'pub' or 'pri'
+                    const years=parseFloat(input.name.split('_')[2]) || parseFloat(input.parentElement.parentElement.dataset.years) || 0; // Fix logic to get years
+                    // Correct logic: find parent .edu-stage-row dataset
+                    const row = input.closest('.edu-stage-row');
+                    const y = parseFloat(row.dataset.years) || 0;
+                    const cost = (CONFIG[type+'-'+stage] || 0);
+                    sub += cost * y;
                 }); 
                 card.querySelector('.child-subtotal').innerText = fmt(sub); 
                 eduTotal += sub; 
@@ -442,9 +444,6 @@
             updateExpenseRow('房貸/房租', clean(document.getElementById('house-monthly').value)*12);
             const firstParentMoney = document.querySelector('.p-money'); if(firstParentMoney) updateExpenseRow('孝親費', clean(firstParentMoney.value||0)*12);
         }
-
-        // Helpers
-        function addFamilyMember() { const d=document.createElement('div'); d.className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 relative animate-fade-in family-member-row"; d.innerHTML=`<div class="md:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">關係</label><select class="form-input fam-rel"><option>配偶</option><option>子</option><option>女</option><option>父</option><option>母</option><option>祖父母</option></select></div><div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">姓名</label><input type="text" class="form-input name-input"></div><div class="md:col-span-4"><label class="block text-xs font-bold text-slate-500 mb-1">出生年月日</label><input type="date" class="form-input dob-input fam-dob" onchange="updateAge(this)"></div><div class="md:col-span-3 relative"><label class="block text-xs font-bold text-slate-500 mb-1">保險年齡</label><div class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 border border-slate-200 age-display">-- 歲</div><button onclick="this.closest('.grid').remove();calculateAll()" class="absolute -top-2 -right-2 text-red-400 hover:text-red-600"><i class="fas fa-times-circle"></i></button></div>`; document.getElementById('family-container').appendChild(d); }
 
         // PDF Generation
         async function generateReport() {
