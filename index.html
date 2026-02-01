@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 Pro (2026 最終完美版)</title>
+    <title>倍安保險需求分析系統 Pro (2026 完整選單版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -94,11 +94,9 @@
             <div class="max-w-6xl mx-auto glass-card shadow-2xl rounded-3xl overflow-hidden border border-white">
                 <div class="gradient-bg p-6 md:p-8 text-white flex justify-between items-center">
                     <div><h1 class="text-2xl md:text-3xl font-black">倍安保險需求分析系統</h1><p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p></div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="clearAllData()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center backdrop-blur-sm border border-white/20" title="清空所有欄位">
-                            <i class="fas fa-trash-alt mr-2"></i>清除
-                        </button>
-                        <button onclick="toggleSettings()" class="text-white/80 hover:text-white transition p-2"><i class="fas fa-cog text-xl"></i></button>
+                    <div class="flex items-center gap-4">
+                        <button onclick="clearAllData()" class="text-white/80 hover:text-red-300 transition text-sm flex items-center gap-1" title="清空所有欄位"><i class="fas fa-trash-alt"></i> 清除</button>
+                        <button onclick="toggleSettings()" class="text-white/80 hover:text-white transition"><i class="fas fa-cog text-xl"></i></button>
                         <div class="text-right opacity-80 text-sm font-mono border-l pl-4 border-white/20">Step 1/3</div>
                     </div>
                 </div>
@@ -113,7 +111,7 @@
                             <div id="main-user-row" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-sm" data-relation="本人">
                                 <div class="md:col-span-2">
                                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">關係</label>
-                                    <select id="main-relation" class="form-input bg-white font-bold text-slate-700">
+                                    <select id="main-relation" class="form-input bg-white font-bold text-slate-700 persist-input">
                                         <option value="本人" selected>本人</option>
                                         <option value="配偶">配偶</option>
                                         <option value="子">子</option>
@@ -524,13 +522,15 @@
             if(saved) CONFIG = { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
         }
         function resetDefaultConfig() { if(confirm('恢復預設參數？')) { CONFIG = { ...DEFAULT_CONFIG }; for(let k in CONFIG) document.getElementById(`cfg-${k}`).value = CONFIG[k]; } }
-        
-        // MODIFIED: Only saves to localStorage, does NOT load on init
+        function clearAllData() { if(confirm('確定要清除所有資料嗎？')) { localStorage.removeItem('pwm_data_static'); localStorage.removeItem('pwm_data_dynamic'); location.reload(); } }
+
         function saveData() {
             const data = {};
             document.querySelectorAll('.persist-input').forEach(el => {
                 if(el.type === 'checkbox') data[el.id] = el.checked; else data[el.id] = el.value;
             });
+            // NO LONGER SAVING SI-TYPE TO FORCE DEFAULT
+            // data['si-type'] = document.getElementById('si-type').value; 
             
             const dynamicData = { parents: [], children: [], income: [], expense: [], family: [] };
             document.querySelectorAll('.family-member-row').forEach(row => dynamicData.family.push({ relation: row.querySelector('.relation-input').value, name: row.querySelector('.name-input').value, dob: row.querySelector('.dob-input').value }));
@@ -541,9 +541,34 @@
             localStorage.setItem('pwm_data_dynamic', JSON.stringify(dynamicData));
         }
 
-        // MODIFIED: Removed automatic loadData call from init
         function loadData() {
-            // Implementation kept for manual restore if needed in future, but not called on init
+            try {
+                const staticData = JSON.parse(localStorage.getItem('pwm_data_static'));
+                if(staticData) {
+                    for(let id in staticData) {
+                        const el = document.getElementById(id);
+                        if(el) { if(el.type === 'checkbox') el.checked = staticData[id]; else el.value = staticData[id]; }
+                    }
+                    /* REMOVED LOADING SI-TYPE TO FORCE DEFAULT */
+                    updateSocialInsurance(); // Update link/note based on default
+                    syncPage2Visibility();
+                } else {
+                    updateSocialInsurance();
+                }
+                const dynamicData = JSON.parse(localStorage.getItem('pwm_data_dynamic'));
+                if(dynamicData) {
+                    if(dynamicData.family) {
+                        const container = document.getElementById('family-container');
+                        container.querySelectorAll('.family-member-row').forEach(e => e.remove());
+                        dynamicData.family.forEach(f => { addFamilyMember(); const r = container.lastElementChild; r.querySelector('.relation-input').value = f.relation; r.querySelector('.name-input').value = f.name; r.querySelector('.dob-input').value = f.dob; updateAge(r.querySelector('.dob-input')); });
+                    }
+                    document.getElementById('parents-container').innerHTML = ''; dynamicData.parents.forEach(p => addParentRow(p.type, p.age, p.money));
+                    document.getElementById('edu-container').innerHTML = ''; dynamicData.children.forEach(c => addChildEduRow(c.age, c.degree, c.type));
+                    document.getElementById('income-body').innerHTML = ''; dynamicData.income.forEach(i => addFlowRow('income', i.name, i.amount));
+                    document.getElementById('expense-body').innerHTML = ''; dynamicData.expense.forEach(e => addFlowRow('expense', e.name, e.amount));
+                }
+            } catch(e) {}
+            const dobInput = document.getElementById('main-dob'); if(dobInput.value) updateAge(dobInput);
         }
 
         function updateAge(input) {
@@ -557,10 +582,26 @@
             saveData();
         }
 
+        // UPDATED: Now uses select for new members
         function addFamilyMember() {
             const div = document.createElement('div');
             div.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 relative animate-fade-in family-member-row";
-            div.innerHTML = `<div class="md:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">關係</label><select class="form-input relation-input persist-input" onchange="saveData()"><option>配偶</option><option>子女</option><option>父母</option></select></div><div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">姓名</label><input type="text" class="form-input name-input" onchange="saveData()"></div><div class="md:col-span-4"><label class="block text-xs font-bold text-slate-500 mb-1">出生年月日</label><input type="date" class="form-input dob-input" onchange="updateAge(this)"></div><div class="md:col-span-3 relative"><label class="block text-xs font-bold text-slate-500 mb-1">保險年齡</label><div class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 border border-slate-200 age-display">-- 歲</div><button onclick="this.closest('.grid').remove();saveData()" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-xs shadow-md">×</button></div>`;
+            div.innerHTML = `
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">關係</label>
+                    <select class="form-input relation-input persist-input" onchange="saveData()">
+                        <option>配偶</option>
+                        <option>子</option>
+                        <option>女</option>
+                        <option>父</option>
+                        <option>母</option>
+                        <option>祖父母</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">姓名</label><input type="text" class="form-input name-input" onchange="saveData()"></div>
+                <div class="md:col-span-4"><label class="block text-xs font-bold text-slate-500 mb-1">出生年月日</label><input type="date" class="form-input dob-input" onchange="updateAge(this)"></div>
+                <div class="md:col-span-3 relative"><label class="block text-xs font-bold text-slate-500 mb-1">保險年齡</label><div class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 border border-slate-200 age-display">-- 歲</div><button onclick="this.closest('.grid').remove();saveData()" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-xs shadow-md">×</button></div>
+            `;
             document.getElementById('family-container').appendChild(div);
         }
 
@@ -622,7 +663,7 @@
                     <head>
                         <title>保障分析報告 - ${name}</title>
                         <style>
-                            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
+                            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap');
                             body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                             @page { size: A4; margin: 0; }
                             .page { width: 210mm; height: 296mm; overflow: hidden; page-break-after: always; position: relative; display: flex; flex-direction: column; background: white; }
@@ -630,8 +671,8 @@
                             .cover-line { width: 80px; height: 6px; background: #b45309; margin-bottom: 30px; }
                             .cover-title-group h1 { font-size: 54px; font-weight: 900; margin: 0; line-height: 1.2; }
                             .cover-sub { font-size: 20px; font-weight: 300; margin-bottom: 60px; letter-spacing: 2px; opacity: 0.9; }
-                            .header-bar { height: 15mm; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; font-size: 14px; letter-spacing: 1px; flex-shrink: 0; }
-                            .header-right { font-size: 24px; font-weight: 900; color: #b45309; }
+                            .header-bar { height: 15mm; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; flex-shrink: 0; }
+                            .header-right { text-align: right; color: white; }
                             .content { padding: 15mm 20mm; flex: 1; display: flex; flex-direction: column; }
                             .page-title { font-size: 24px; font-weight: 900; color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; flex-shrink: 0; }
                             .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; flex-shrink: 0; }
@@ -664,7 +705,7 @@
                                 </div>
                                 <div style="margin-top: 80px; padding-left: 38px;">
                                     <p style="font-size: 14px; opacity: 0.6; letter-spacing: 1px;">PREPARED FOR</p>
-                                    <h2 style="font-size: 36px; margin: 5px 0 20px 0; font-weight: 700;">${name} <span style="font-size: 18px; font-weight: 300;">先生/小姐</span></h2>
+                                    <h2 style="font-size: 36px; margin: 5px 0 20px 0; font-weight: 700;">${name} <span style="font-size: 18px; font-weight: 300; font-family: 'Noto Sans TC';">先生/小姐</span></h2>
                                     <p style="font-size: 14px; opacity: 0.8;">報告日期：${date}</p>
                                 </div>
                             </div>
@@ -672,9 +713,9 @@
                         <div class="page">
                             <div class="header-bar">
                                 <span style="font-weight:300; font-size:16px; color:#fcd34d;">Polaris Financial Group</span>
-                                <div style="color:white; text-align:right;">
-                                    <div style="font-weight:700; font-size:18px; line-height:1.2;">風險分析</div>
-                                    <div style="font-weight:300; font-size:9px; letter-spacing:2px;">RISK ANALYSIS</div>
+                                <div class="header-right">
+                                    <div style="font-weight:400; font-size:18px; line-height:1.1;">風險分析</div>
+                                    <div style="font-weight:100; font-size:9px; letter-spacing:2px; text-transform:uppercase;">Risk Analysis</div>
                                 </div>
                             </div>
                             <div class="content">
@@ -702,9 +743,9 @@
                         <div class="page">
                             <div class="header-bar">
                                 <span style="font-weight:300; font-size:16px; color:#fcd34d;">Polaris Financial Group</span>
-                                <div style="color:white; text-align:right;">
-                                    <div style="font-weight:700; font-size:18px; line-height:1.2;">財務建議</div>
-                                    <div style="font-weight:300; font-size:9px; letter-spacing:2px;">FINANCIAL ADVICE</div>
+                                <div class="header-right">
+                                    <div style="font-weight:400; font-size:18px; line-height:1.1;">財務建議</div>
+                                    <div style="font-weight:100; font-size:9px; letter-spacing:2px; text-transform:uppercase;">Financial Advice</div>
                                 </div>
                             </div>
                             <div class="content">
