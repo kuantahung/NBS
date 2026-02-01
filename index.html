@@ -91,7 +91,9 @@
                         <p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="clearAllData()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center backdrop-blur-sm border border-white/20 cursor-pointer"><i class="fas fa-trash-alt mr-2"></i>清除</button>
+                        <button type="button" onclick="clearAllData()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center backdrop-blur-sm border border-white/20 cursor-pointer">
+                            <i class="fas fa-trash-alt mr-2"></i>清除
+                        </button>
                         <button type="button" onclick="toggleSettings()" class="text-white/80 hover:text-white transition p-2 cursor-pointer"><i class="fas fa-cog text-xl"></i></button>
                         <div class="text-right opacity-80 text-sm font-mono border-l pl-4 border-white/20">Step 1/3</div>
                     </div>
@@ -107,7 +109,9 @@
                             <div id="main-user-row" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-sm family-member-row">
                                 <div class="md:col-span-2">
                                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">關係</label>
-                                    <select id="main-relation" class="form-input bg-white font-bold text-slate-700 fam-rel"><option value="本人" selected>本人</option><option value="配偶">配偶</option><option value="子">子</option><option value="女">女</option><option value="父">父</option><option value="母">母</option><option value="祖父母">祖父母</option></select>
+                                    <select id="main-relation" class="form-input bg-white font-bold text-slate-700 fam-rel">
+                                        <option value="本人" selected>本人</option><option value="配偶">配偶</option><option value="子">子</option><option value="女">女</option><option value="父">父</option><option value="母">母</option><option value="祖父母">祖父母</option>
+                                    </select>
                                 </div>
                                 <div class="md:col-span-3"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">姓名</label><input type="text" id="main-name" class="form-input name-input" placeholder="請輸入姓名"></div>
                                 <div class="md:col-span-4"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">出生年月日</label><input type="date" id="main-dob" class="form-input dob-input fam-dob" onchange="updateAge(this)"></div>
@@ -127,7 +131,9 @@
                     </section>
 
                     <div class="flex justify-end pt-6">
-                        <button type="button" onclick="goToPage2()" class="bg-slate-900 text-white px-10 py-4 rounded-xl font-bold text-xl hover:bg-slate-800 transition shadow-xl flex items-center transform hover:-translate-y-1 cursor-pointer select-none relative z-50">下一步：需求量化 <i class="fas fa-arrow-right ml-3"></i></button>
+                        <button type="button" onclick="goToPage2()" class="bg-slate-900 text-white px-10 py-4 rounded-xl font-bold text-xl hover:bg-slate-800 transition shadow-xl flex items-center transform hover:-translate-y-1 cursor-pointer select-none relative z-50">
+                            下一步：需求量化 <i class="fas fa-arrow-right ml-3"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -149,7 +155,10 @@
                             <tr class="calc-row-sick"><td class="font-bold p-5" data-label="項目">癌症/重大傷病</td><td class="p-5 text-sm text-slate-400" data-label="品質">一筆給付型</td><td class="p-5" data-label="安心額度"><input type="number" class="sick-target form-input" onkeyup="calculateAll()" placeholder="0"></td><td class="p-5" data-label="已備"><input type="number" class="sick-current form-input" onkeyup="calculateAll()" placeholder="0"></td><td class="text-right font-bold text-red-500 sick-gap text-lg p-5">0 萬</td></tr>
                         </tbody>
                     </table>
-                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-4"><h4 class="font-bold text-slate-800 mb-2 text-lg flex items-center"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 顧問指引</h4><p class="text-slate-600 text-sm leading-relaxed"><strong>住院品質：</strong>升等單人房可降低院內交叉感染風險，提升休養品質。 <br><strong>癌症趨勢：</strong>標靶藥物、免疫療法多需自費，建議規劃一次金以應對短期大額支出。</p></div>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-4">
+                        <h4 class="font-bold text-slate-800 mb-2 text-lg flex items-center"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 顧問指引</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed"><strong>住院品質：</strong>升等單人房可降低院內交叉感染風險，提升休養品質。 <br><strong>癌症趨勢：</strong>標靶藥物、免疫療法多需自費，建議規劃一次金以應對短期大額支出。</p>
+                    </div>
                 </div>
 
                 <div id="section-disability" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -159,7 +168,10 @@
                         <div><label class="text-base font-bold text-slate-600 mb-2 block">已備月扶助金 (萬)</label><input type="number" id="dis-current" class="form-input text-lg persist-input" placeholder="例如: 1" onkeyup="calculateAll()"></div>
                     </div>
                     <div class="bg-amber-50 p-6 rounded-2xl text-center border border-amber-100 mb-6"><div class="text-sm text-amber-800 uppercase tracking-wider mb-1 font-bold">每月缺口</div><div class="text-5xl font-black text-amber-600" id="dis-gap">0 <span class="text-xl">萬/月</span></div></div>
-                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-4"><h4 class="font-bold text-slate-800 mb-2 text-lg"><i class="fas fa-chart-line text-yellow-500 mr-2"></i> 市場行情參考</h4><ul class="text-slate-600 text-sm list-disc list-inside leading-relaxed"><li><strong>外籍看護：</strong> 約 2.5 ~ 3 萬/月</li><li><strong>專業機構：</strong> 約 4 ~ 6 萬/月</li><li><strong>本國看護：</strong> 約 7 ~ 8 萬/月</li><li class="list-none ml-4 text-slate-400 mt-1">* 尚未包含尿布、營養品等耗材費 (約 1 萬/月)</li></ul></div>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-4">
+                        <h4 class="font-bold text-slate-800 mb-2 text-lg"><i class="fas fa-chart-line text-yellow-500 mr-2"></i> 市場行情參考</h4>
+                        <ul class="text-slate-600 text-sm list-disc list-inside leading-relaxed"><li><strong>外籍看護：</strong> 約 2.5 ~ 3 萬/月</li><li><strong>專業機構：</strong> 約 4 ~ 6 萬/月</li><li><strong>本國看護：</strong> 約 7 ~ 8 萬/月</li><li class="list-none ml-4 text-slate-400 mt-1">* 尚未包含尿布、營養品等耗材費 (約 1 萬/月)</li></ul>
+                    </div>
                 </div>
 
                 <div id="section-death" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -172,7 +184,10 @@
                         </div>
                         <div>
                              <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">配偶與生活</h3></div>
-                             <div class="grid grid-cols-2 gap-6"><div><label class="text-sm font-bold text-slate-500 block mb-2">每月生活費 (萬)</label><input type="number" id="living-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div><div><label class="text-sm font-bold text-slate-500 block mb-2">照顧年數 (年)</label><input type="number" id="living-years" class="form-input" placeholder="例如: 20" onkeyup="calculateAll()"></div></div>
+                             <div class="grid grid-cols-2 gap-6">
+                                 <div><label class="text-sm font-bold text-slate-500 block mb-2">每月生活費 (萬)</label><input type="number" id="living-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div>
+                                 <div><label class="text-sm font-bold text-slate-500 block mb-2">照顧年數 (年)</label><input type="number" id="living-years" class="form-input" placeholder="例如: 20" onkeyup="calculateAll()"></div>
+                             </div>
                         </div>
                         <div>
                              <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">子女教育基金 <span class="text-xs font-normal text-slate-400 ml-2">(依教育部參考標準估算)</span></h3></div>
@@ -180,7 +195,10 @@
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">居住與最後費用</h3></div>
-                            <div class="grid grid-cols-2 gap-6"><div><label class="text-sm font-bold text-slate-500 block mb-2">房貸/租金月支 (萬)</label><input type="number" id="house-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div><div><label class="text-sm font-bold text-slate-500 block mb-2">剩餘年數 (年)</label><input type="number" id="house-years" class="form-input" placeholder="0" onkeyup="calculateAll()"></div></div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div><label class="text-sm font-bold text-slate-500 block mb-2">房貸/租金月支 (萬)</label><input type="number" id="house-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div>
+                                <div><label class="text-sm font-bold text-slate-500 block mb-2">剩餘年數 (年)</label><input type="number" id="house-years" class="form-input" placeholder="0" onkeyup="calculateAll()"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-10 pt-8 border-t-2 border-slate-100">
@@ -197,7 +215,10 @@
                 </div>
 
                 <div id="section-retire" class="hidden bg-white p-6 rounded-2xl shadow-lg border-l-8 border-emerald-500 calc-section">
-                    <div class="flex justify-between items-center mb-6"><h2 class="text-xl md:text-2xl font-black text-slate-800 flex items-center"><span class="bg-emerald-100 p-2 rounded-lg mr-3 text-emerald-600 text-xl">🌅</span> 退休生活規劃</h2><a href="https://kuantahung.github.io/Retire-in-Real/" target="_blank" class="text-sm bg-emerald-600 text-white px-4 py-2 rounded-full hover:bg-emerald-700 shadow-lg flex items-center gap-2 transition transform hover:-translate-y-0.5"><i class="fas fa-calculator"></i> 精算版</a></div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800 flex items-center"><span class="bg-emerald-100 p-2 rounded-lg mr-3 text-emerald-600 text-xl">🌅</span> 退休生活規劃</h2>
+                        <a href="https://kuantahung.github.io/Retire-in-Real/" target="_blank" class="text-sm bg-emerald-600 text-white px-4 py-2 rounded-full hover:bg-emerald-700 shadow-lg flex items-center gap-2 transition transform hover:-translate-y-0.5"><i class="fas fa-calculator"></i> 精算版</a>
+                    </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold text-slate-500 mb-1">目前年齡</label><input type="number" id="retire-current-age" class="form-input bg-slate-100 font-bold text-slate-500 cursor-not-allowed" readonly></div><div><label class="block text-sm font-bold text-emerald-600 mb-1">退休年齡</label><input type="number" id="retire-target-age" class="form-input font-bold text-emerald-700" placeholder="例如: 65" onkeyup="calculateAll()"></div></div>
@@ -213,7 +234,9 @@
                 </div>
 
                 <div class="flex justify-center mt-8 pb-12">
-                    <button type="button" onclick="goToPage3()" class="bg-slate-900 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-slate-800 transition shadow-2xl flex items-center transform hover:-translate-y-1">下一步：財務試算 <i class="fas fa-arrow-right ml-3"></i></button>
+                    <button type="button" onclick="goToPage3()" class="bg-slate-900 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-slate-800 transition shadow-2xl flex items-center transform hover:-translate-y-1">
+                        下一步：財務試算 <i class="fas fa-arrow-right ml-3"></i>
+                    </button>
                 </div>
              </div>
         </div>
@@ -249,14 +272,44 @@
                         <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
                             <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">保險身份</label>
                             <select id="si-type" class="si-select" onchange="updateSocialInsurance()">
-                                <option value="labor" selected>勞保</option><option value="gov">公保</option><option value="farmer">農保</option><option value="fisher">漁保</option><option value="national">國保</option>
+                                <option value="labor" selected>勞保</option>
+                                <option value="gov">公保</option>
+                                <option value="farmer">農保</option>
+                                <option value="fisher">漁保</option>
+                                <option value="national">國保</option>
                             </select>
-                            <div class="mt-4"><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">投保薪資 / 保俸</label><div class="relative"><span class="absolute left-3 top-2.5 text-slate-400">$</span><input type="number" id="labor-salary-p3" class="form-input pl-6 font-bold" oninput="calculateAll()"></div></div>
-                            <div class="flex justify-end mt-2"><a id="si-table-link" href="https://www.bli.gov.tw/0005475.html" target="_blank" class="salary-table-link"><i class="fas fa-external-link-alt mr-1"></i>查看級距表</a></div>
-                            <div class="mt-4 pt-4 border-t border-slate-200"><div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500">預估身故給付</span><span class="text-lg font-black text-blue-600"><span id="labor-benefit-val-p3">0</span> 萬</span></div><div id="si-note" class="text-[10px] text-slate-400 mt-1 text-right"></div></div>
+                            <div class="mt-4">
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">投保薪資 / 保俸</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                    <input type="number" id="labor-salary-p3" class="form-input pl-6 font-bold" oninput="calculateAll()">
+                                </div>
+                            </div>
+                            <div class="flex justify-end mt-2">
+                                <a id="si-table-link" href="https://www.bli.gov.tw/0005475.html" target="_blank" class="salary-table-link"><i class="fas fa-external-link-alt mr-1"></i>查看級距表</a>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-200">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-slate-500">預估身故給付</span>
+                                    <span class="text-lg font-black text-blue-600"><span id="labor-benefit-val-p3">0</span> 萬</span>
+                                </div>
+                                <div id="si-note" class="text-[10px] text-slate-400 mt-1 text-right"></div>
+                            </div>
                         </div>
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200"><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">公司團保 / 撫卹 (萬)</label><div class="relative"><input type="number" id="group-insurance-p3" class="form-input font-bold" placeholder="0" oninput="calculateAll()"><span class="absolute right-3 top-2.5 text-slate-400 text-sm font-bold">萬</span></div></div>
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200"><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">商業壽險 (現有保單)</label><div class="relative"><input type="number" id="comm-insurance-p3" class="form-input font-bold" placeholder="0" oninput="syncInsurance(this.value, 'existing-insurance-p2')"><span class="absolute right-3 top-2.5 text-slate-400 text-sm font-bold">萬</span></div></div>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">公司團保 / 撫卹 (萬)</label>
+                            <div class="relative">
+                                <input type="number" id="group-insurance-p3" class="form-input font-bold" placeholder="0" oninput="calculateAll()">
+                                <span class="absolute right-3 top-2.5 text-slate-400 text-sm font-bold">萬</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">商業壽險 (現有保單)</label>
+                            <div class="relative">
+                                <input type="number" id="comm-insurance-p3" class="form-input font-bold" placeholder="0" oninput="syncInsurance(this.value, 'existing-insurance-p2')">
+                                <span class="absolute right-3 top-2.5 text-slate-400 text-sm font-bold">萬</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -270,19 +323,33 @@
     <script>
         const DEFAULT_CONFIG = { 'pub-kindergarten': 6, 'pri-kindergarten': 15, 'pub-elementary': 2, 'pri-elementary': 20, 'pub-junior': 3, 'pri-junior': 20, 'pub-senior': 5, 'pri-senior': 25, 'pub-university': 10, 'pri-university': 30 };
         let CONFIG = { ...DEFAULT_CONFIG };
-        const EDU_STAGES = [ { id: 'kindergarten', name: '幼兒園', years: 3, minAge: 3, maxAge: 6 }, { id: 'elementary', name: '國小', years: 6, minAge: 6, maxAge: 12 }, { id: 'junior', name: '國中', years: 3, minAge: 12, maxAge: 15 }, { id: 'senior', name: '高中', years: 3, minAge: 15, maxAge: 18 }, { id: 'university', name: '大學', years: 4, minAge: 18, maxAge: 22 } ];
-        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年(30個月)', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定 20,400 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定 19,761 x 5個月', fixed: 19761, tableUrl: null } };
+        const EDU_STAGES = [ 
+            { id: 'kindergarten', name: '幼兒園', years: 3, minAge: 3, maxAge: 6 }, 
+            { id: 'elementary', name: '國小', years: 6, minAge: 6, maxAge: 12 }, 
+            { id: 'junior', name: '國中', years: 3, minAge: 12, maxAge: 15 }, 
+            { id: 'senior', name: '高中', years: 3, minAge: 15, maxAge: 18 }, 
+            { id: 'university', name: '大學', years: 4, minAge: 18, maxAge: 22 } 
+        ];
+        const SI_DATA = { 
+            labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, 
+            gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, 
+            farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400, tableUrl: null }, 
+            fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, 
+            national: { label: '國保喪葬給付', note: '* 固定月投保金額 19,761元 x 5個月', fixed: 19761, tableUrl: null } 
+        };
 
         function initSystem() {
             clearAllInputs();
             const saved = localStorage.getItem('pwm_config');
             if(saved) CONFIG = { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
+            for(let k in CONFIG) { const el = document.getElementById('cfg-' + k); if(el) el.value = CONFIG[k]; }
             if(document.getElementById('income-body').children.length === 0) addFlowRow('income');
             if(document.getElementById('expense-body').children.length === 0) addFlowRow('expense');
             document.getElementById('si-type').value = 'labor';
             updateSocialInsurance();
             calculateAll();
         }
+
         function clearAllData() { if(confirm('確定要清空所有資料嗎？')) { clearAllInputs(); initSystem(); } }
         function clearAllInputs() {
             document.querySelectorAll('input').forEach(i => { if(i.type === 'checkbox' || i.type === 'radio') i.checked = false; else i.value = ''; });
@@ -347,8 +414,8 @@
                 const dob = r.querySelector('.fam-dob').value;
                 if(dob) {
                     const age = getAge(dob);
-                    if(rel==='父') addParentRow(name || '父親', age, 76.94);
-                    else if(rel==='母') addParentRow(name || '母親', age, 84.17);
+                    if(rel==='父') addParentRow(name, age, 76);
+                    else if(rel==='母') addParentRow(name, age, 84);
                     else if(rel==='子'||rel==='女') {
                         let stagesHTML = ''; let hasStage = false;
                         EDU_STAGES.forEach(s => {
@@ -367,7 +434,7 @@
             calculateAll();
         }
 
-        function addParentRow(name, age, target) { const d=document.createElement('div'); d.className="flex gap-4 mb-2 items-center bg-slate-50 p-3 rounded-lg border border-slate-200 parent-row"; d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700">${name}</div><div class="text-xs text-slate-400">${age} 歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${target}"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()"></div></div><input type="hidden" class="p-age" value="${age}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button>`; document.getElementById('parents-container').appendChild(d); }
+        function addParentRow(n, a, t) { const d=document.createElement('div'); d.className="flex gap-4 mb-2 items-center bg-slate-50 p-3 rounded-lg border border-slate-200 parent-row"; d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700">${n}</div><div class="text-xs text-slate-400">${a}歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${t||80}"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()"></div></div><input type="hidden" class="p-age" value="${a||0}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button>`; document.getElementById('parents-container').appendChild(d); }
         function addFlowRow(type, name, amount) { const tr=document.createElement('tr'); const master = type==='income'?['薪資收入','年終獎金','股利','租金','兼職','投資','其他']:['生活開銷','交通','房貸/房租','保險','孝親費','教育','娛樂','雜支','其他']; const current=Array.from(document.querySelectorAll(`.${type}-select`)).map(s=>s.value); const avail=master.filter(i=>!current.includes(i)); if(avail.length===0){alert('已無更多選項');return;} tr.innerHTML=`<td><select class="form-input ${type}-select" onchange="calculateAll()">${avail.map(o=>`<option>${o}</option>`).join('')}</select></td><td><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll()"></td><td class="text-right"><button onclick="this.closest('tr').remove();calculateAll()" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash"></i></button></td>`; document.getElementById(type+'-body').appendChild(tr); if(name){ tr.querySelector('select').value=name; } if(amount){ tr.querySelector('input').value=amount; } }
         function updateExpenseRow(n, v) { if(!v) return; let f=false; document.querySelectorAll('.expense-select').forEach(s=>{ if(s.value===n) { s.closest('tr').querySelector('input').value=Math.round(v); f=true; }}); if(!f) addFlowRow('expense', n, Math.round(v)); }
         function toggleSettings() { document.getElementById('settings-modal').classList.toggle('hidden'); }
@@ -395,9 +462,24 @@
 
             // Death
             let pTotal=0; document.querySelectorAll('.parent-row').forEach(r => { const m=clean(r.querySelector('.p-money').value), t=clean(r.querySelector('.p-type').value), a=clean(r.querySelector('.p-age').value); pTotal+=m*12*Math.max(0,t-a); });
-            // Education Fix (NaN)
-            let eduTotal=0; document.querySelectorAll('.edu-child-card').forEach(card => { let sub=0; card.querySelectorAll('.edu-toggle-input:checked').forEach(input => { const stage=input.name.split('_')[1]; const type=input.value.split('_')[0]; const years=parseFloat(input.value.split('_')[1]); sub += (type==='public'?CONFIG['pub-'+stage]:CONFIG['pri-'+stage]) * years; }); card.querySelector('.child-subtotal').innerText = fmt(sub); eduTotal += sub; });
-            
+            if(document.getElementById('total-parents')) document.getElementById('total-parents').innerText = fmt(pTotal) + " 萬";
+
+            let eduTotal=0; document.querySelectorAll('.edu-child-card').forEach(card => { 
+                let sub=0; 
+                card.querySelectorAll('.edu-stage-row').forEach(row => {
+                    const checked = row.querySelector('input:checked');
+                    if(checked) {
+                        const stage=row.dataset.stage;
+                        const years=parseFloat(row.dataset.years)||0;
+                        const cost = checked.value==='public' ? CONFIG['pub-'+stage] : CONFIG['pri-'+stage];
+                        sub += (cost||0) * years;
+                    }
+                }); 
+                card.querySelector('.child-subtotal').innerText = fmt(sub); 
+                eduTotal += sub; 
+            });
+            document.getElementById('total-edu').innerText = fmt(eduTotal) + " 萬"; // NEW FIX
+
             const living = clean(document.getElementById('living-monthly').value)*12*clean(document.getElementById('living-years').value);
             const house = clean(document.getElementById('house-monthly').value)*12*clean(document.getElementById('house-years').value);
             const deathNeed = pTotal + eduTotal + living + house;
@@ -420,7 +502,7 @@
             const firstParentMoney = document.querySelector('.p-money'); if(firstParentMoney) updateExpenseRow('孝親費', clean(firstParentMoney.value||0)*12);
         }
 
-        // --- PDF Generation (Fixed with correct Padding & Variables) ---
+        // --- PDF Generation (Visual Fix) ---
         async function generateReport() {
             try {
                 calculateAll();
@@ -429,7 +511,6 @@
                 const clean = v => parseFloat(String(v).replace(/,/g, '')) || 0;
                 const fmt = n => n.toLocaleString('en-US');
 
-                // Data
                 let sickGap=0; document.querySelectorAll('.sick-gap').forEach(e=>sickGap+=clean(e.innerText));
                 const disGap = document.getElementById('dis-gap').innerText;
                 const deathGap = document.getElementById('grand-total-gap').innerText + ' 萬';
@@ -438,8 +519,8 @@
                 const siVal = document.getElementById('labor-benefit-val-p3').innerText;
                 const grpVal = document.getElementById('group-insurance-p3').value||0;
                 const commVal = document.getElementById('comm-insurance-p3').value||0;
-                let totInc=0; document.querySelectorAll('.income-amount').forEach(i=>totInc+=clean(i.value)); // Variable name matched
-                let totExp=0; document.querySelectorAll('.expense-amount').forEach(i=>totExp+=clean(i.value));
+                let totInc=0; document.querySelectorAll('.income-amount').forEach(i=>totInc+=clean(i.value)); // Variable Fix
+                let totExp=0; document.querySelectorAll('.expense-amount').forEach(i=>totExp+=clean(i.value)); // Variable Fix
                 const net = totInc - totExp; const netFmt = fmt(net);
 
                 const advice = [];
@@ -462,42 +543,7 @@
                 }
                 
                 if(window.reportChart) window.reportChart.destroy();
-                window.reportChart = new Chart(ctx, { 
-                    type: 'bar', 
-                    data: { labels: labels, datasets: [ { label: '家庭責任', data: dNeed, backgroundColor: 'rgba(252, 211, 77, 0.5)', order: 2 }, { label: '現有保障', data: dExist, type: 'line', borderColor: '#1e293b', borderWidth: 4, pointRadius:0, order: 1 } ] }, 
-                    options: { 
-                        animation: false, 
-                        responsive: false, 
-                        scales: { y: { beginAtZero: true, ticks: { font: { size: 26 } } }, x: { ticks: { font: { size: 26 } } } }, 
-                        plugins: { 
-                            legend: { labels: { font: { size: 26 } } },
-                            id: 'gapLabel',
-                            afterDatasetsDraw: (chart) => {
-                                const ctx = chart.ctx;
-                                chart.data.datasets.forEach((dataset, i) => {
-                                    if (dataset.label === '家庭責任') {
-                                        const meta = chart.getDatasetMeta(i);
-                                        meta.data.forEach((bar, index) => {
-                                            const currentAge = labels[index];
-                                            // Show gap at start and every 5 years
-                                            if (index === 0 || currentAge % 5 === 0) {
-                                                const gap = dataset.data[index] - exist;
-                                                if (gap > 0) {
-                                                    ctx.save();
-                                                    ctx.fillStyle = '#dc2626';
-                                                    ctx.font = 'bold 28px Arial';
-                                                    ctx.textAlign = 'center';
-                                                    ctx.fillText(gap.toLocaleString(), bar.x, bar.y - 15);
-                                                    ctx.restore();
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        } 
-                    } 
-                });
+                window.reportChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [ { label: '家庭責任', data: dNeed, backgroundColor: 'rgba(252, 211, 77, 0.5)', order: 2 }, { label: '現有保障', data: dExist, type:'line', borderColor: '#1e293b', borderWidth: 4, pointRadius:0, order: 1 } ] }, options: { animation: false, responsive: false, scales: { y: { beginAtZero: true, ticks:{font:{size:26}} }, x: { ticks:{font:{size:26}} } }, plugins: { legend: { labels: { font: { size: 26 } } }, id: 'gapLabel', afterDatasetsDraw: (chart) => { const ctx = chart.ctx; chart.data.datasets.forEach((dataset, i) => { if (dataset.label === '家庭責任') { const meta = chart.getDatasetMeta(i); meta.data.forEach((bar, index) => { const currentAge = labels[index]; if (index === 0 || currentAge % 5 === 0) { const gap = dataset.data[index] - exist; if (gap > 0) { ctx.save(); ctx.fillStyle = '#dc2626'; ctx.font = 'bold 28px Arial'; ctx.textAlign = 'center'; ctx.fillText(gap.toLocaleString(), bar.x, bar.y - 15); ctx.restore(); } } }); } }); } } } });
                 const chartURL = canvas.toDataURL();
 
                 const html = `<html><head><style>@page { size: A4; margin: 0; } body { font-family: 'Microsoft JhengHei', sans-serif; margin: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .page { width: 210mm; height: 296mm; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; background: white; } .cover { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); flex: 1; display: flex; flex-direction: column; justify-content: center; padding-left: 30mm; color: white; } .title-line { width: 4px; height: 100%; background: #fcd34d; position:absolute; left:0; top:0; } .header { height: 15mm; background: #0f172a; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; } .brand-l { color: #fcd34d; font-weight: 300; font-size: 14px; letter-spacing: 1px; } .brand-r { color: white; text-align: right; line-height: 1.2; } .content { padding: 20mm; flex: 1; display: flex; flex-direction: column; } .pg-title { font-size: 24px; font-weight: 900; color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 25px; } .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; } .card { background: #f8fafc; border-top: 4px solid #94a3b8; padding: 15px 10px; text-align: center; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } .card-val { font-size: 22px; font-weight: 900; color: #0f172a; } .card-lbl { font-size: 12px; color: #64748b; font-weight: bold; margin-bottom: 5px; } .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; } .tbl th { text-align: left; padding: 10px; background: #f1f5f9; color: #475569; border-bottom: 2px solid #cbd5e1; } .tbl td { padding: 10px; border-bottom: 1px solid #f1f5f9; } .advice { background: #fff; border: 1px solid #e2e8f0; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); } .advice li { margin-bottom: 15px; } .footer { height: 12mm; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; font-size: 10px; color: #94a3b8; }</style></head><body>
