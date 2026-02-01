@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 Pro (2026 Polaris 視覺定制版)</title>
+    <title>倍安保險需求分析系統 Pro (2026 每次開啟空白版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -94,7 +94,6 @@
                 <div class="gradient-bg p-6 md:p-8 text-white flex justify-between items-center">
                     <div><h1 class="text-2xl md:text-3xl font-black">倍安保險需求分析系統</h1><p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p></div>
                     <div class="flex items-center gap-4">
-                        <button onclick="clearAllData()" class="text-white/80 hover:text-red-300 transition text-sm flex items-center gap-1" title="清空所有欄位"><i class="fas fa-trash-alt"></i> 清除</button>
                         <button onclick="toggleSettings()" class="text-white/80 hover:text-white transition"><i class="fas fa-cog text-xl"></i></button>
                         <div class="text-right opacity-80 text-sm font-mono border-l pl-4 border-white/20">Step 1/3</div>
                     </div>
@@ -589,7 +588,7 @@
                 // 專家建議
                 let suggestionHTML = '';
                 if (net > 0) {
-                    suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#059669;font-size:20px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div><strong style="color:#0f172a;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:1.6;font-size:15px;color:#334155;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ul></div>`;
+                    suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#059669;font-size:20px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div><strong style="color:#fcd34d;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:1.6;font-size:15px;color:#334155;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ul></div>`;
                 } else {
                     suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#dc2626;font-size:20px;">🔴 財務健康診斷：需要調整</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">目前的年度收支呈現緊繃狀態。理財的第一步是「收支平衡」，這將是我們首要解決的課題。</p></div><div><strong style="color:#991b1b;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:1.6;font-size:15px;color:#334155;"><li><strong>現金流檢視</strong>：協助您檢視支出明細，找出調整空間。</li><li><strong>基礎保障優先</strong>：在預算有限下，優先規劃高槓桿的定期壽險與實支實付。</li><li><strong>風險轉嫁</strong>：避免因突發疾病導致家庭財務崩潰，保障是為了留住每一分錢。</li></ul></div>`;
                 }
@@ -623,12 +622,12 @@
                             .chart-container { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
                             .chart-title { text-align: center; font-weight: bold; color: #475569; margin-bottom: 10px; }
                             .chart-img { width: 100%; height: 100%; object-fit: contain; max-height: 400px; }
-                            .split-layout-v { display: flex; flex-direction: column; height: 100%; gap: 30px; } 
-                            .fin-top { display: flex; gap: 20px; }
-                            .fin-bottom { flex: 1; display: flex; flex-direction: column; }
-                            .fin-dashboard { background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; flex: 1; }
+                            .split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; height: 100%; }
+                            .fin-left { display: flex; flex-direction: column; gap: 20px; }
+                            .fin-right { display: flex; flex-direction: column; }
+                            .fin-dashboard { background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
                             .fin-score { font-size: 36px; font-weight: 900; color: ${net>=0 ? '#059669' : '#dc2626'}; margin: 10px 0; }
-                            .advice-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+                            .advice-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
                             .footer { height: 12mm; border-top: 1px solid #e2e8f0; margin: 0 20mm; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #94a3b8; flex-shrink: 0; }
                         </style>
                     </head>
