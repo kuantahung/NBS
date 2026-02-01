@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 Pro (2026 完整選單版)</title>
+    <title>倍安保險需求分析系統 Pro (2026 寬版優化版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -180,46 +180,44 @@
 
                 <div id="section-sick" class="hidden bg-white p-6 rounded-2xl shadow-lg border-l-8 border-blue-500 calc-section">
                     <h2 class="text-xl md:text-2xl font-black text-slate-800 mb-6 flex items-center"><span class="bg-blue-100 p-2 rounded-lg mr-3 text-blue-600 text-xl">🏥</span> 疾病醫療需求</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2">
-                            <table class="w-full text-left mobile-card-table">
-                                <thead class="bg-slate-50 text-slate-600 text-sm uppercase"><tr><th class="p-5 rounded-l-lg">項目</th><th class="p-5">品質需求</th><th class="p-5">可安心額度 (萬)</th><th class="p-5">已備規劃 (萬)</th><th class="p-5 rounded-r-lg text-right">缺口</th></tr></thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    <tr class="calc-row-sick">
-                                        <td class="font-bold p-5" data-label="項目">住院雜費/差額</td>
-                                        <td class="p-5" data-label="品質"><select class="form-input text-sm persist-input id-sick-room-type" onchange="saveData()"><option>單人房</option><option>雙人房</option><option>健保房</option></select></td>
-                                        <td class="p-5" data-label="安心額度"><input type="number" class="sick-target form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
-                                        <td class="p-5" data-label="已備"><input type="number" class="sick-current form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
-                                        <td class="text-right font-bold text-red-500 sick-gap action-col p-5" data-label="缺口">0 萬</td>
-                                    </tr>
-                                    <tr class="calc-row-sick">
-                                        <td class="font-bold p-5" data-label="項目">癌症/重大傷病</td>
-                                        <td class="p-5 text-sm text-slate-400" data-label="品質">一筆給付型</td>
-                                        <td class="p-5" data-label="安心額度"><input type="number" class="sick-target form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
-                                        <td class="p-5" data-label="已備"><input type="number" class="sick-current form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
-                                        <td class="text-right font-bold text-red-500 sick-gap action-col p-5" data-label="缺口">0 萬</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="lg:col-span-1 bg-slate-50 p-6 rounded-xl border border-slate-200">
-                            <h4 class="font-bold text-slate-800 mb-4 text-lg flex items-center"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 顧問指引</h4>
-                            <div class="space-y-4 text-base text-slate-700 leading-relaxed"><p><strong>住院品質：</strong>升等單人房可降低院內交叉感染風險，提升休養品質。</p><p><strong>癌症趨勢：</strong>標靶藥物、免疫療法多需自費，建議規劃一次金以應對短期大額支出。</p></div>
+                    <div class="space-y-4">
+                        <table class="w-full text-left mobile-card-table">
+                            <thead class="bg-slate-50 text-slate-600 text-sm uppercase"><tr><th class="p-5 rounded-l-lg">項目</th><th class="p-5">品質需求</th><th class="p-5">可安心額度 (萬)</th><th class="p-5">已備規劃 (萬)</th><th class="p-5 rounded-r-lg text-right">缺口</th></tr></thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="calc-row-sick">
+                                    <td class="font-bold p-5" data-label="項目">住院雜費/差額</td>
+                                    <td class="p-5" data-label="品質"><select class="form-input text-sm persist-input id-sick-room-type" onchange="saveData()"><option>單人房</option><option>雙人房</option><option>健保房</option></select></td>
+                                    <td class="p-5" data-label="安心額度"><input type="number" class="sick-target form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
+                                    <td class="p-5" data-label="已備"><input type="number" class="sick-current form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
+                                    <td class="text-right font-bold text-red-500 sick-gap action-col p-5" data-label="缺口">0 萬</td>
+                                </tr>
+                                <tr class="calc-row-sick">
+                                    <td class="font-bold p-5" data-label="項目">癌症/重大傷病</td>
+                                    <td class="p-5 text-sm text-slate-400" data-label="品質">一筆給付型</td>
+                                    <td class="p-5" data-label="安心額度"><input type="number" class="sick-target form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
+                                    <td class="p-5" data-label="已備"><input type="number" class="sick-current form-input persist-input" onkeyup="calculateAll();saveData()" placeholder="0"></td>
+                                    <td class="text-right font-bold text-red-500 sick-gap action-col p-5" data-label="缺口">0 萬</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2 text-lg flex items-center"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 顧問指引</h4>
+                            <p class="text-slate-600"><strong>住院品質：</strong>升等單人房可降低院內交叉感染風險，提升休養品質。<strong>癌症趨勢：</strong>標靶藥物、免疫療法多需自費，建議規劃一次金以應對短期大額支出。</p>
                         </div>
                     </div>
                 </div>
 
                 <div id="section-disability" class="hidden bg-white p-6 rounded-2xl shadow-lg border-l-8 border-amber-500 calc-section">
                     <h2 class="text-xl md:text-2xl font-black text-slate-800 mb-6 flex items-center"><span class="bg-amber-100 p-2 rounded-lg mr-3 text-amber-600 text-xl">♿</span> 失能照護需求</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="space-y-6">
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div><label class="text-base font-bold text-slate-600 mb-2 block">預估每月照護費 (萬)</label><input type="number" id="dis-target" class="form-input text-lg persist-input" placeholder="例如: 5" onkeyup="calculateAll();saveData()"></div>
                             <div><label class="text-base font-bold text-slate-600 mb-2 block">已備月扶助金 (萬)</label><input type="number" id="dis-current" class="form-input text-lg persist-input" placeholder="例如: 1" onkeyup="calculateAll();saveData()"></div>
-                            <div class="bg-amber-50 p-6 rounded-xl text-center border border-amber-100 mt-4"><div class="text-sm text-amber-800 uppercase tracking-wider mb-2">每月缺口</div><div class="text-4xl font-black text-amber-600" id="dis-gap">0 <span class="text-xl">萬/月</span></div></div>
                         </div>
+                        <div class="bg-amber-50 p-4 rounded-xl text-center border border-amber-100"><div class="text-sm text-amber-800 uppercase tracking-wider mb-1">每月缺口</div><div class="text-4xl font-black text-amber-600" id="dis-gap">0 <span class="text-xl">萬/月</span></div></div>
                         <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                            <h4 class="font-bold text-slate-800 mb-4 text-lg"><i class="fas fa-chart-line text-yellow-500 mr-2"></i> 市場行情參考</h4>
-                            <ul class="space-y-3 text-base text-slate-700 list-disc list-inside leading-relaxed"><li><strong>外籍看護：</strong> 約 2.5 ~ 3 萬/月</li><li><strong>專業機構：</strong> 約 4 ~ 6 萬/月</li><li><strong>本國看護：</strong> 約 7 ~ 8 萬/月</li><li class="text-slate-500 text-sm pt-2 list-none ml-0">* 尚未包含尿布、營養品等耗材費 (約 1 萬/月)</li></ul>
+                            <h4 class="font-bold text-slate-800 mb-2 text-lg"><i class="fas fa-chart-line text-yellow-500 mr-2"></i> 市場行情參考</h4>
+                            <ul class="text-slate-600 list-disc list-inside"><li><strong>外籍看護：</strong> 約 2.5 ~ 3 萬/月</li><li><strong>專業機構：</strong> 約 4 ~ 6 萬/月</li><li><strong>本國看護：</strong> 約 7 ~ 8 萬/月</li><li class="text-slate-400 text-sm list-none ml-4">* 尚未包含尿布、營養品等耗材費 (約 1 萬/月)</li></ul>
                         </div>
                     </div>
                 </div>
@@ -582,7 +580,6 @@
             saveData();
         }
 
-        // UPDATED: Now uses select for new members
         function addFamilyMember() {
             const div = document.createElement('div');
             div.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 relative animate-fade-in family-member-row";
@@ -610,7 +607,47 @@
         function syncPage2Visibility() { const map = {'check-sick': 'section-sick', 'check-disability': 'section-disability', 'check-death': 'section-death', 'check-retire': 'section-retire'}; for (let [cbId, secId] of Object.entries(map)) { const el = document.getElementById(secId); if(document.getElementById(cbId).checked) el.classList.remove('hidden'); else el.classList.add('hidden'); } }
         function addParentRow(typeVal, ageVal, moneyVal) { const div = document.createElement('div'); div.className = "parent-row flex gap-2 items-center text-sm mb-2"; div.innerHTML = `<select class="p-type border rounded p-2"><option value="76">父(平均壽命76)</option><option value="84">母(平均壽命84)</option></select><input type="number" class="p-age border rounded p-2 w-20" placeholder="歲" onchange="saveData()"><input type="number" class="p-money border rounded p-2 w-24" placeholder="月(萬)" onkeyup="calculateAll();saveData()" onchange="saveData()"><button onclick="this.parentElement.remove();calculateAll();saveData()" class="text-red-500 px-2"><i class="fas fa-trash"></i></button>`; document.getElementById('parents-container').appendChild(div); if(typeVal) div.querySelector('.p-type').value = typeVal; if(ageVal) div.querySelector('.p-age').value = ageVal; if(moneyVal) div.querySelector('.p-money').value = moneyVal; }
         function addChildEduRow(ageVal, degreeVal, typeVal) { const ts = Date.now() + Math.random(); const div = document.createElement('div'); div.className = "child-edu-row bg-slate-50 p-3 rounded-lg text-sm border border-slate-200"; div.innerHTML = `<div class="flex gap-2 mb-2"><input type="number" class="c-age w-full border rounded p-2" placeholder="歲" onkeyup="calculateAll();saveData()" onchange="saveData()"><select class="c-degree w-full border rounded p-2" onchange="calculateAll();saveData()"><option value="22">至大學畢業(22歲)</option><option value="24">至碩士畢業(24歲)</option></select></div><div class="flex justify-between items-center"><div class="space-x-3"><label class="inline-flex items-center"><input type="radio" name="e_${ts}" value="public" class="c-type mr-1" onchange="calculateAll();saveData()">公立</label><label class="inline-flex items-center"><input type="radio" name="e_${ts}" value="private" class="c-type mr-1" checked onchange="calculateAll();saveData()">私立</label></div><button onclick="this.closest('.child-edu-row').remove();calculateAll();saveData()" class="text-red-400 text-xs font-bold">刪除</button></div>`; document.getElementById('edu-container').appendChild(div); if(ageVal) div.querySelector('.c-age').value = ageVal; if(degreeVal) div.querySelector('.c-degree').value = degreeVal; if(typeVal) div.querySelector(`input[value="${typeVal}"]`).checked = true; }
-        function addFlowRow(type, name, amount) { const tbody = document.getElementById(type + '-body'); const tr = document.createElement('tr'); const masterList = type === 'income' ? ['薪資收入', '年終獎金', '股利', '租金', '兼職', '投資', '其他'] : ['生活開銷', '交通', '房貸/房租', '保險', '孝親費', '教育', '娛樂', '雜支', '其他']; let opts = masterList.map(o => `<option value="${o}">${o}</option>`).join(''); tr.innerHTML = `<td data-label="項目"><select class="form-input ${type}-select" onchange="saveData()">${opts}</select></td><td data-label="金額"><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll();saveData()" onchange="saveData()"></td><td class="action-col"><button onclick="this.closest('tr').remove();calculateAll();saveData()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button></td>`; tbody.appendChild(tr); if(name) { const sel = tr.querySelector('select'); if(![...sel.options].some(o => o.value === name)) { const o = document.createElement('option'); o.value = name; o.text = name; sel.add(o); } sel.value = name; } if(amount) tr.querySelector('input').value = amount; }
+        
+        function addFlowRow(type, name, amount) { 
+            // 1. 獲取已選項目
+            const currentSelects = document.querySelectorAll(`.${type}-select`);
+            const usedValues = Array.from(currentSelects).map(s => s.value);
+            
+            // 2. 定義母清單
+            const masterList = type === 'income' 
+                ? ['薪資收入', '年終獎金', '股利', '租金', '兼職', '投資', '其他'] 
+                : ['生活開銷', '交通', '房貸/房租', '保險', '孝親費', '教育', '娛樂', '雜支', '其他'];
+            
+            // 3. 過濾出尚未使用的選項
+            const availableOptions = masterList.filter(item => !usedValues.includes(item));
+            
+            // 4. 如果沒有可用選項，提示用戶
+            if (availableOptions.length === 0) {
+                alert("已無更多選項可新增");
+                return;
+            }
+
+            // 5. 建立 Row
+            const tbody = document.getElementById(type + '-body'); 
+            const tr = document.createElement('tr'); 
+            
+            let opts = availableOptions.map(o => `<option value="${o}">${o}</option>`).join('');
+            
+            tr.innerHTML = `<td data-label="項目"><select class="form-input ${type}-select" onchange="saveData()">${opts}</select></td><td data-label="金額"><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll();saveData()" onchange="saveData()"></td><td class="action-col"><button onclick="this.closest('tr').remove();calculateAll();saveData()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button></td>`; 
+            tbody.appendChild(tr); 
+            
+            // 如果有傳入特定值 (如自動計算的房貸)，設定上去
+            if(name) { 
+                const sel = tr.querySelector('select'); 
+                // 確保該選項存在 (如果已被過濾掉，這步會失敗，但對於初始化邏輯來說通常是第一筆，所以沒問題)
+                if(![...sel.options].some(o => o.value === name)) { 
+                    const o = document.createElement('option'); o.value = name; o.text = name; sel.add(o); 
+                } 
+                sel.value = name; 
+            } 
+            if(amount) tr.querySelector('input').value = amount; 
+        }
+
         function updateExpenseRow(name, val) { if (!val || val === 0) return; let found = false; document.querySelectorAll('#expense-body tr').forEach(row => { if(row.querySelector('select')?.value === name) { row.querySelector('input').value = Math.round(val); found = true; } }); if (!found) addFlowRow('expense', name, Math.round(val)); }
 
         // --- 核心：商業報告生成邏輯 ---
@@ -652,7 +689,7 @@
                 // 專家建議
                 let suggestionHTML = '';
                 if (net > 0) {
-                    suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#059669;font-size:20px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div><strong style="color:#0f172a;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:2.4;font-size:16px;color:#334155;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ul></div>`;
+                    suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#059669;font-size:20px;">🟢 財務健康診斷：正向結餘</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">恭喜您！您的年度收支狀況良好，擁有自由現金流。這為您的資產配置提供了絕佳的基礎。</p></div><div><strong style="color:#fcd34d;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:2.4;font-size:16px;color:#334155;"><li><strong>優先建構防護網</strong>：將部分盈餘投入補足醫療與身故缺口，確保資產不因風險而縮水。</li><li><strong>專款專用退休金</strong>：善用時間複利，提早啟動退休儲蓄計劃。</li><li><strong>資產增值</strong>：剩餘資金可進行穩健投資，對抗通貨膨脹。</li></ul></div>`;
                 } else {
                     suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#dc2626;font-size:20px;">🔴 財務健康診斷：需要調整</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">目前的年度收支呈現緊繃狀態。理財的第一步是「收支平衡」，這將是我們首要解決的課題。</p></div><div><strong style="color:#991b1b;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:2.4;font-size:16px;color:#334155;"><li><strong>現金流檢視</strong>：協助您檢視支出明細，找出調整空間。</li><li><strong>基礎保障優先</strong>：在預算有限下，優先規劃高槓桿的定期壽險與實支實付。</li><li><strong>風險轉嫁</strong>：避免因突發疾病導致家庭財務崩潰，保障是為了留住每一分錢。</li></ul></div>`;
                 }
@@ -671,9 +708,9 @@
                             .cover-line { width: 80px; height: 6px; background: #b45309; margin-bottom: 30px; }
                             .cover-title-group h1 { font-size: 54px; font-weight: 900; margin: 0; line-height: 1.2; }
                             .cover-sub { font-size: 20px; font-weight: 300; margin-bottom: 60px; letter-spacing: 2px; opacity: 0.9; }
-                            .header-bar { height: 15mm; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; flex-shrink: 0; }
+                            .header-bar { height: 15mm; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; font-size: 14px; letter-spacing: 1px; flex-shrink: 0; }
                             .header-right { text-align: right; color: white; }
-                            .content { padding: 15mm 20mm; flex: 1; display: flex; flex-direction: column; }
+                            .content { padding: 15mm 10mm; flex: 1; display: flex; flex-direction: column; } /* Padding Reduced to 10mm */
                             .page-title { font-size: 24px; font-weight: 900; color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; flex-shrink: 0; }
                             .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; flex-shrink: 0; }
                             .metric-card { background: #f8fafc; border-top: 4px solid #cbd5e1; padding: 15px 10px; text-align: center; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -700,7 +737,7 @@
                             <div class="cover-page">
                                 <div class="cover-title-group" style="border-left: 8px solid #b45309; padding-left: 30px;">
                                     <div style="font-size: 20px; opacity: 0.8; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase;">Your wealth guidance to the future</div>
-                                    <h1 style="font-size: 56px; font-weight: 900; line-height: 1.1; margin: 0;">全方位<br>財富保障報告</h1>
+                                    <h1 style="font-size: 56px; font-weight: 900; line-height: 1.1; margin: 0;">倍安保險<br>需求分析報告</h1>
                                     <div style="font-size: 24px; font-weight: 300; margin-top: 10px; color: #fcd34d;">Polaris Financial Group</div>
                                 </div>
                                 <div style="margin-top: 80px; padding-left: 38px;">
