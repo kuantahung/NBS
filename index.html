@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 商業旗艦版)</title>
+    <title>全方位財富保障系統 Pro (2026 級距查詢版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -26,6 +26,10 @@
         /* 社保選單專用樣式 */
         .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; font-size: 0.95rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
         .si-select:hover { border-color: #3b82f6; }
+        
+        /* 級距表連結樣式 */
+        .salary-table-link { font-size: 0.75rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; margin-top: 4px; transition: color 0.2s; }
+        .salary-table-link:hover { color: #1d4ed8; text-decoration: underline; }
 
         /* 手機版適配 */
         @media (max-width: 768px) {
@@ -306,6 +310,11 @@
                                 </select>
                                 <label class="text-xs font-bold text-slate-500 block mb-2">投保薪資 / 保俸 (元/月)</label>
                                 <input type="number" id="labor-salary-p3" class="form-input font-bold persist-input" placeholder="例如: 45800" oninput="calculateAll();saveData()">
+                                <div class="text-right mt-1" id="si-link-container">
+                                    <a id="si-table-link" href="https://www.bli.gov.tw/0005475.html" target="_blank" class="salary-table-link">
+                                        <i class="fas fa-table mr-1"></i>查看薪資級距表
+                                    </a>
+                                </div>
                                 <div class="text-xs font-bold text-blue-600 mt-2 flex justify-between"><span>身故給付：<span id="labor-benefit-val-p3">0</span> 萬</span></div>
                                 <div id="si-note" class="text-[10px] text-slate-400 mt-1">* 依勞保普通傷病身故(35個月)估算</div>
                             </div>
@@ -326,12 +335,29 @@
         const DEFAULT_CONFIG = { 'pub-k12': 10, 'pri-k12': 30, 'pub-uni': 25, 'pri-uni': 50, 'pub-mas': 30, 'pri-mas': 60 };
         let CONFIG = { ...DEFAULT_CONFIG };
 
-        // Social Insurance Data (Note only)
+        // Social Insurance Data with official table URLs
         const SI_DATA = {
-            labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算' },
-            gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算' },
-            farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400 },
-            fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算' }
+            labor: { 
+                label: '勞保身故給付', 
+                note: '* 依勞保普通傷病身故(35個月)估算', 
+                tableUrl: 'https://www.bli.gov.tw/0005475.html' 
+            },
+            gov: { 
+                label: '公保死亡給付', 
+                note: '* 依未滿20年投保年資(30個月)保守估算', 
+                tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance/insurance-premium/insurance-premium-rate-and-salary-grade-table' 
+            },
+            farmer: { 
+                label: '農保喪葬津貼', 
+                note: '* 固定投保金額20,400元 x 15個月', 
+                fixed: 20400,
+                tableUrl: null 
+            },
+            fisher: { 
+                label: '漁保身故給付', 
+                note: '* 比照勞保甲類會員標準(35個月)估算', 
+                tableUrl: 'https://www.bli.gov.tw/0005475.html' 
+            }
         };
 
         function initSystem() {
@@ -347,9 +373,19 @@
             const data = SI_DATA[type];
             const input = document.getElementById('labor-salary-p3');
             const note = document.getElementById('si-note');
+            const tableLink = document.getElementById('si-table-link');
 
             note.innerText = data.note;
 
+            // Handle Link Visibility & URL
+            if (data.tableUrl) {
+                tableLink.href = data.tableUrl;
+                tableLink.classList.remove('hidden');
+            } else {
+                tableLink.classList.add('hidden');
+            }
+
+            // Handle Fixed Amount
             if (type === 'farmer') {
                 input.value = 20400;
                 input.setAttribute('readonly', true);
@@ -357,7 +393,7 @@
             } else {
                 input.removeAttribute('readonly');
                 input.classList.remove('bg-gray-100');
-                if (input.value == 20400) input.value = ''; // Clear if it was auto-set
+                if (input.value == 20400) input.value = ''; 
             }
             calculateAll();
             saveData();
@@ -514,11 +550,11 @@
                 const retireGap = document.getElementById('retire-annual-save').innerText + " 萬/年";
                 const deathNeed = document.getElementById('grand-total-gap').getAttribute('data-need');
                 
-                // 社保資料抓取 (改用計算後的數據)
+                // 社保資料抓取
                 const siType = document.getElementById('si-type').value;
                 const siLabelMap = { labor: '勞保身故給付', gov: '公保死亡給付', farmer: '農保喪葬津貼', fisher: '漁保身故給付' };
                 const siLabel = siLabelMap[siType];
-                const siBenefit = document.getElementById('labor-benefit-val-p3').innerText; // 已經是萬單位
+                const siBenefit = document.getElementById('labor-benefit-val-p3').innerText;
 
                 const group = document.getElementById('group-insurance-p3').value || 0;
                 const comm = document.getElementById('comm-insurance-p3').value || 0;
@@ -530,7 +566,7 @@
 
                 // 產圖
                 const chartImg = await generateChartAsync(deathNeed, 
-                    clean(siBenefit)*10000, // Pass actual value
+                    clean(siBenefit)*10000, 
                     group, comm);
 
                 // 專家建議
