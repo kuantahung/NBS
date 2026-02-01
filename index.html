@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 級距查詢版)</title>
+    <title>全方位財富保障系統 Pro (2026 商業旗艦修正版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -270,7 +270,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-center mt-12 pb-12">
+                <div class="flex justify-center mt-12 pb-16">
                     <button onclick="togglePages('page3')" class="bg-slate-800 text-white px-10 py-4 rounded-xl text-lg font-bold shadow-xl hover:bg-slate-900 transition transform hover:-translate-y-1 w-full md:w-auto">下一步：收支與總結</button>
                 </div>
             </div>
@@ -345,7 +345,7 @@
             gov: { 
                 label: '公保死亡給付', 
                 note: '* 依未滿20年投保年資(30個月)保守估算', 
-                tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance/insurance-premium/insurance-premium-rate-and-salary-grade-table' 
+                tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' 
             },
             farmer: { 
                 label: '農保喪葬津貼', 
@@ -550,11 +550,11 @@
                 const retireGap = document.getElementById('retire-annual-save').innerText + " 萬/年";
                 const deathNeed = document.getElementById('grand-total-gap').getAttribute('data-need');
                 
-                // 社保資料抓取
+                // 社保資料抓取 (改用計算後的數據)
                 const siType = document.getElementById('si-type').value;
                 const siLabelMap = { labor: '勞保身故給付', gov: '公保死亡給付', farmer: '農保喪葬津貼', fisher: '漁保身故給付' };
                 const siLabel = siLabelMap[siType];
-                const siBenefit = document.getElementById('labor-benefit-val-p3').innerText;
+                const siBenefit = document.getElementById('labor-benefit-val-p3').innerText; // 已經是萬單位
 
                 const group = document.getElementById('group-insurance-p3').value || 0;
                 const comm = document.getElementById('comm-insurance-p3').value || 0;
@@ -566,7 +566,7 @@
 
                 // 產圖
                 const chartImg = await generateChartAsync(deathNeed, 
-                    clean(siBenefit)*10000, 
+                    clean(siBenefit)*10000, // Pass actual value
                     group, comm);
 
                 // 專家建議
