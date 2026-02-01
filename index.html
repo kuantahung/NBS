@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 國保升級版)</title>
+    <title>倍安保險需求分析系統 Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -92,7 +92,10 @@
         <div id="page1" class="container mx-auto py-6 px-4 md:py-10">
             <div class="max-w-6xl mx-auto glass-card shadow-2xl rounded-3xl overflow-hidden border border-white">
                 <div class="gradient-bg p-6 md:p-8 text-white flex justify-between items-center">
-                    <div><h1 class="text-2xl md:text-3xl font-black">全方位財富保障系統</h1><p class="mt-1 text-slate-300 text-xs md:text-sm">Professional Wealth Management</p></div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-black">倍安保險需求分析系統</h1>
+                        <p class="mt-1 text-slate-300 text-xs md:text-sm">Your needs are our responsibility</p>
+                    </div>
                     <div class="flex items-center gap-4">
                         <button onclick="clearAllData()" class="text-white/80 hover:text-red-300 transition text-sm flex items-center gap-1" title="清空所有欄位"><i class="fas fa-trash-alt"></i> 清除</button>
                         <button onclick="toggleSettings()" class="text-white/80 hover:text-white transition"><i class="fas fa-cog text-xl"></i></button>
@@ -336,7 +339,7 @@
         const DEFAULT_CONFIG = { 'pub-k12': 10, 'pri-k12': 30, 'pub-uni': 25, 'pri-uni': 50, 'pub-mas': 30, 'pri-mas': 60 };
         let CONFIG = { ...DEFAULT_CONFIG };
 
-        // Social Insurance Data with corrected official table URLs
+        // Social Insurance Data with updated official table URLs
         const SI_DATA = {
             labor: { 
                 label: '勞保身故給付', 
@@ -375,9 +378,12 @@
             if(document.getElementById('expense-body').children.length === 0) addFlowRow('expense');
             calculateAll();
             
-            // FORCE DEFAULT TO LABOR (Override any saved state)
-            document.getElementById('si-type').value = 'labor';
-            updateSocialInsurance();
+            // FORCE DEFAULT TO LABOR (Override any saved state on initial load)
+            const siSelect = document.getElementById('si-type');
+            if (siSelect) {
+                siSelect.value = 'labor';
+                updateSocialInsurance();
+            }
         }
 
         function updateSocialInsurance() {
@@ -405,7 +411,6 @@
             } else {
                 input.removeAttribute('readonly');
                 input.classList.remove('bg-gray-100');
-                // Don't auto clear if it was labor, just let user edit
                 if (input.value == 20400 || input.value == 19761) input.value = ''; 
             }
             calculateAll();
@@ -414,7 +419,6 @@
 
         function calculateAll() {
             const fmt = n => parseFloat(n).toLocaleString('en-US'); const clean = str => parseFloat(String(str).replace(/,/g, '')) || 0;
-            // ... (Rest of calculation logic same as before)
             document.querySelectorAll('.calc-row-sick').forEach(row => { const t = clean(row.querySelector('.sick-target').value); const c = clean(row.querySelector('.sick-current').value); row.querySelector('.sick-gap').innerText = fmt(Math.max(0, t - c)) + " 萬"; });
             const disT = clean(document.getElementById('dis-target').value); const disC = clean(document.getElementById('dis-current').value); document.getElementById('dis-gap').innerHTML = `${fmt(Math.max(0, disT - disC))} <span class="text-lg">萬/月</span>`;
             const rCur = clean(document.getElementById('retire-current-age').value); const rTar = clean(document.getElementById('retire-target-age').value) || 65; const rEnd = clean(document.getElementById('retire-end-age').value) || 85; const rMon = clean(document.getElementById('retire-monthly').value);
@@ -434,16 +438,16 @@
             let siBenefit = 0;
             
             if (siType === 'labor' || siType === 'fisher') {
-                siBenefit = Math.round(salary * 35); // 5 funeral + 30 survivor
+                siBenefit = Math.round(salary * 35); 
             } else if (siType === 'gov') {
-                siBenefit = Math.round(salary * 30); // Conservative estimate
+                siBenefit = Math.round(salary * 30); 
             } else if (siType === 'farmer') {
-                siBenefit = Math.round(20400 * 15); // Fixed
+                siBenefit = Math.round(20400 * 15); 
             } else if (siType === 'national') {
-                siBenefit = Math.round(19761 * 5); // Fixed
+                siBenefit = Math.round(19761 * 5); 
             }
             
-            document.getElementById('labor-benefit-val-p3').innerText = fmt(Math.round(siBenefit/10000)); // Display in Wan
+            document.getElementById('labor-benefit-val-p3').innerText = fmt(Math.round(siBenefit/10000));
 
             const group = clean(document.getElementById('group-insurance-p3').value); const comm = clean(document.getElementById('comm-insurance-p3').value); const deathGap = Math.max(0, deathNeed - (Math.round(siBenefit/10000) + group + comm));
             document.getElementById('grand-total-gap').innerText = fmt(Math.round(deathGap)); document.getElementById('grand-total-gap').setAttribute('data-need', deathNeed);
@@ -451,10 +455,6 @@
             updateExpenseRow('房貸/房租', clean(document.getElementById('house-monthly').value) * 12); updateExpenseRow('孝親費', clean(document.querySelector('.p-money')?.value || 0) * 12);
         }
 
-        // ... (Rest of the functions: toggleSettings, saveConfig, loadConfig, resetDefaultConfig, clearAllData, saveData, loadData, updateAge, addFamilyMember, syncInsurance, togglePages, syncPage2Visibility, addParentRow, addChildEduRow, addFlowRow, updateExpenseRow)
-        // Ensure these functions from previous version are included here. For brevity in this response, I'm assuming you copy them.
-        // I will include the critical ones to ensure it works out of the box.
-        
         function toggleSettings() {
             const modal = document.getElementById('settings-modal');
             modal.classList.toggle('hidden');
@@ -480,9 +480,7 @@
             document.querySelectorAll('.persist-input').forEach(el => {
                 if(el.type === 'checkbox') data[el.id] = el.checked; else data[el.id] = el.value;
             });
-            // NO LONGER SAVING SI-TYPE TO FORCE DEFAULT
-            // data['si-type'] = document.getElementById('si-type').value; 
-            
+            // Don't save SI type to ensure reset
             const dynamicData = { parents: [], children: [], income: [], expense: [], family: [] };
             document.querySelectorAll('.family-member-row').forEach(row => dynamicData.family.push({ relation: row.querySelector('.relation-input').value, name: row.querySelector('.name-input').value, dob: row.querySelector('.dob-input').value }));
             document.querySelectorAll('.parent-row').forEach(row => dynamicData.parents.push({ type: row.querySelector('.p-type').value, age: row.querySelector('.p-age').value, money: row.querySelector('.p-money').value }));
@@ -500,11 +498,7 @@
                         const el = document.getElementById(id);
                         if(el) { if(el.type === 'checkbox') el.checked = staticData[id]; else el.value = staticData[id]; }
                     }
-                    /* REMOVED LOADING SI-TYPE TO FORCE DEFAULT */
-                    updateSocialInsurance(); // Update link/note based on default
                     syncPage2Visibility();
-                } else {
-                    updateSocialInsurance();
                 }
                 const dynamicData = JSON.parse(localStorage.getItem('pwm_data_dynamic'));
                 if(dynamicData) {
@@ -548,7 +542,6 @@
         function addFlowRow(type, name, amount) { const tbody = document.getElementById(type + '-body'); const tr = document.createElement('tr'); const masterList = type === 'income' ? ['薪資收入', '年終獎金', '股利', '租金', '兼職', '投資', '其他'] : ['生活開銷', '交通', '房貸/房租', '保險', '孝親費', '教育', '娛樂', '雜支', '其他']; let opts = masterList.map(o => `<option value="${o}">${o}</option>`).join(''); tr.innerHTML = `<td data-label="項目"><select class="form-input ${type}-select" onchange="saveData()">${opts}</select></td><td data-label="金額"><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll();saveData()" onchange="saveData()"></td><td class="action-col"><button onclick="this.closest('tr').remove();calculateAll();saveData()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button></td>`; tbody.appendChild(tr); if(name) { const sel = tr.querySelector('select'); if(![...sel.options].some(o => o.value === name)) { const o = document.createElement('option'); o.value = name; o.text = name; sel.add(o); } sel.value = name; } if(amount) tr.querySelector('input').value = amount; }
         function updateExpenseRow(name, val) { if (!val || val === 0) return; let found = false; document.querySelectorAll('#expense-body tr').forEach(row => { if(row.querySelector('select')?.value === name) { row.querySelector('input').value = Math.round(val); found = true; } }); if (!found) addFlowRow('expense', name, Math.round(val)); }
 
-        // --- 核心：商業報告生成邏輯 ---
         async function generateReport() {
             calculateAll();
             const overlay = document.getElementById('loading-overlay');
