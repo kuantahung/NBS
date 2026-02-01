@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 商業旗艦終極版)</title>
+    <title>全方位財富保障系統 Pro (2026 智能社保版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -23,6 +23,11 @@
         .form-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 1rem; transition: all 0.2s; }
         .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); outline: none; }
         
+        /* 社保選單專用樣式 */
+        .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.9rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; }
+        .si-link { font-size: 0.75rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; margin-left: auto; }
+        .si-link:hover { text-decoration: underline; }
+
         /* 手機版適配 */
         @media (max-width: 768px) {
             .mobile-card-table thead { display: none; }
@@ -292,7 +297,22 @@
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
                         <h2 class="text-lg font-bold text-blue-600 mb-4 flex items-center"><i class="fas fa-shield-alt mr-2"></i> 社會保險與保障試算</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100"><label class="text-xs font-bold text-slate-500 block mb-2">勞保投保薪資 (元/月)</label><input type="number" id="labor-salary-p3" class="form-input font-bold persist-input" placeholder="例如: 45800" oninput="calculateAll();saveData()"><div class="text-xs font-bold text-blue-600 mt-2 flex justify-between"><span>身故給付：<span id="labor-benefit-val-p3">0</span> 萬</span></div><div class="text-[10px] text-slate-400 mt-1">* 以普通傷病且年資滿2年(35個月)估算</div></div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <label class="text-xs font-bold text-slate-500 block mb-1">選擇保險身份</label>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <select id="si-type" class="si-select" onchange="updateSocialInsurance()">
+                                        <option value="labor">勞保 (一般勞工)</option>
+                                        <option value="gov">公保 (公教人員)</option>
+                                        <option value="farmer">農保 (農民)</option>
+                                        <option value="fisher">漁保 (漁會甲類)</option>
+                                    </select>
+                                    <a id="si-link" href="https://www.bli.gov.tw/0100014.html" target="_blank" class="si-link" title="前往官方網站"><i class="fas fa-external-link-alt"></i> 官方公式</a>
+                                </div>
+                                <label class="text-xs font-bold text-slate-500 block mb-2">投保薪資 / 保俸 (元/月)</label>
+                                <input type="number" id="labor-salary-p3" class="form-input font-bold persist-input" placeholder="例如: 45800" oninput="calculateAll();saveData()">
+                                <div class="text-xs font-bold text-blue-600 mt-2 flex justify-between"><span>身故給付：<span id="labor-benefit-val-p3">0</span> 萬</span></div>
+                                <div id="si-note" class="text-[10px] text-slate-400 mt-1">* 依勞保普通傷病身故(35個月)估算</div>
+                            </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100"><label class="text-xs font-bold text-slate-500 block mb-2">公司團保 / 撫卹 (萬)</label><input type="number" id="group-insurance-p3" class="form-input persist-input" placeholder="0" oninput="calculateAll();saveData()"></div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100"><label class="text-xs font-bold text-slate-500 block mb-2">商業壽險 (現有保單)</label><input type="number" id="comm-insurance-p3" class="form-input bg-white persist-input" placeholder="0" oninput="syncInsurance(this.value, 'existing-insurance-p2'); saveData()"></div>
                         </div>
@@ -310,6 +330,14 @@
         const DEFAULT_CONFIG = { 'pub-k12': 10, 'pri-k12': 30, 'pub-uni': 25, 'pri-uni': 50, 'pub-mas': 30, 'pri-mas': 60 };
         let CONFIG = { ...DEFAULT_CONFIG };
 
+        // Social Insurance Data
+        const SI_DATA = {
+            labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', url: 'https://www.bli.gov.tw/0100014.html' },
+            gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', url: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance/benefit-items-and-claiming-procedures/death-benefit' },
+            farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', url: 'https://www.bli.gov.tw/0006759.html', fixed: 20400 },
+            fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算', url: 'https://www.bli.gov.tw/0000008.html' }
+        };
+
         function initSystem() {
             loadConfig(); 
             loadData();   
@@ -318,6 +346,70 @@
             calculateAll();
         }
 
+        function updateSocialInsurance() {
+            const type = document.getElementById('si-type').value;
+            const data = SI_DATA[type];
+            const input = document.getElementById('labor-salary-p3');
+            const link = document.getElementById('si-link');
+            const note = document.getElementById('si-note');
+
+            link.href = data.url;
+            note.innerText = data.note;
+
+            if (type === 'farmer') {
+                input.value = 20400;
+                input.setAttribute('readonly', true);
+                input.classList.add('bg-gray-100');
+            } else {
+                input.removeAttribute('readonly');
+                input.classList.remove('bg-gray-100');
+                if (input.value == 20400) input.value = ''; // Clear if it was auto-set
+            }
+            calculateAll();
+            saveData();
+        }
+
+        function calculateAll() {
+            const fmt = n => parseFloat(n).toLocaleString('en-US'); const clean = str => parseFloat(String(str).replace(/,/g, '')) || 0;
+            // ... (Rest of calculation logic same as before)
+            document.querySelectorAll('.calc-row-sick').forEach(row => { const t = clean(row.querySelector('.sick-target').value); const c = clean(row.querySelector('.sick-current').value); row.querySelector('.sick-gap').innerText = fmt(Math.max(0, t - c)) + " 萬"; });
+            const disT = clean(document.getElementById('dis-target').value); const disC = clean(document.getElementById('dis-current').value); document.getElementById('dis-gap').innerHTML = `${fmt(Math.max(0, disT - disC))} <span class="text-lg">萬/月</span>`;
+            const rCur = clean(document.getElementById('retire-current-age').value); const rTar = clean(document.getElementById('retire-target-age').value) || 65; const rEnd = clean(document.getElementById('retire-end-age').value) || 85; const rMon = clean(document.getElementById('retire-monthly').value);
+            const yrSave = Math.max(0, rTar - rCur); const yrLive = Math.max(0, rEnd - rTar);
+            document.getElementById('retire-years-to-save').innerText = yrSave; document.getElementById('retire-years-to-live').innerText = yrLive;
+            const rTotal = rMon * 12 * yrLive; document.getElementById('retire-total-needed').innerText = fmt(Math.round(rTotal));
+            const rAnnual = yrSave > 0 ? rTotal / yrSave : rTotal; document.getElementById('retire-annual-save').innerText = fmt(rAnnual.toFixed(1));
+            let pTotal = 0; document.querySelectorAll('.parent-row').forEach(r => { const m = clean(r.querySelector('.p-money').value); const endAge = parseFloat(r.querySelector('.p-type').value); const curAge = clean(r.querySelector('.p-age').value); pTotal += m * 12 * Math.max(0, endAge - curAge); }); document.getElementById('total-parents').innerText = fmt(Math.round(pTotal));
+            const houseTotal = clean(document.getElementById('house-monthly').value) * 12 * clean(document.getElementById('house-years').value); document.getElementById('total-house').innerText = fmt(Math.round(houseTotal));
+            const tLiving = clean(document.getElementById('living-monthly').value) * 12 * clean(document.getElementById('living-years').value);
+            let tEdu = 0; document.querySelectorAll('.child-edu-row').forEach(r => { const a = clean(r.querySelector('.c-age').value); const d = parseFloat(r.querySelector('.c-degree').value); const type = r.querySelector('.c-type:checked').value; const k12Cost = type === 'public' ? CONFIG['pub-k12'] : CONFIG['pri-k12']; const uniCost = type === 'public' ? CONFIG['pub-uni'] : CONFIG['pri-uni']; const masCost = type === 'public' ? CONFIG['pub-mas'] : CONFIG['pri-mas']; if(a < 18 && d >= 18) tEdu += (18 - a) * k12Cost; if(a < 22 && d >= 22) tEdu += (22 - Math.max(18, a)) * uniCost; if(a < 24 && d >= 24) tEdu += (24 - Math.max(22, a)) * masCost; }); document.getElementById('total-living-edu').innerText = fmt(Math.round(tLiving + tEdu));
+            const deathNeed = pTotal + tLiving + tEdu + houseTotal; 
+            
+            // Social Insurance Calculation
+            const siType = document.getElementById('si-type').value;
+            const salary = clean(document.getElementById('labor-salary-p3').value);
+            let siBenefit = 0;
+            
+            if (siType === 'labor' || siType === 'fisher') {
+                siBenefit = Math.round(salary * 35); // 5 funeral + 30 survivor
+            } else if (siType === 'gov') {
+                siBenefit = Math.round(salary * 30); // Conservative estimate
+            } else if (siType === 'farmer') {
+                siBenefit = Math.round(20400 * 15); // Fixed
+            }
+            
+            document.getElementById('labor-benefit-val-p3').innerText = fmt(Math.round(siBenefit/10000)); // Display in Wan
+
+            const group = clean(document.getElementById('group-insurance-p3').value); const comm = clean(document.getElementById('comm-insurance-p3').value); const deathGap = Math.max(0, deathNeed - (Math.round(siBenefit/10000) + group + comm));
+            document.getElementById('grand-total-gap').innerText = fmt(Math.round(deathGap)); document.getElementById('grand-total-gap').setAttribute('data-need', deathNeed);
+            let inc = 0, exp = 0; document.querySelectorAll('.income-amount').forEach(i => inc += clean(i.value)); document.querySelectorAll('.expense-amount').forEach(i => exp += clean(i.value)); const net = inc - exp; const netEl = document.getElementById('net-cashflow'); netEl.innerText = fmt(net) + " 萬"; netEl.className = `text-3xl font-black ${net >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+            updateExpenseRow('房貸/房租', clean(document.getElementById('house-monthly').value) * 12); updateExpenseRow('孝親費', clean(document.querySelector('.p-money')?.value || 0) * 12);
+        }
+
+        // ... (Rest of the functions: toggleSettings, saveConfig, loadConfig, resetDefaultConfig, clearAllData, saveData, loadData, updateAge, addFamilyMember, syncInsurance, togglePages, syncPage2Visibility, addParentRow, addChildEduRow, addFlowRow, updateExpenseRow)
+        // Ensure these functions from previous version are included here. For brevity in this response, I'm assuming you copy them.
+        // I will include the critical ones to ensure it works out of the box.
+        
         function toggleSettings() {
             const modal = document.getElementById('settings-modal');
             modal.classList.toggle('hidden');
@@ -343,6 +435,9 @@
             document.querySelectorAll('.persist-input').forEach(el => {
                 if(el.type === 'checkbox') data[el.id] = el.checked; else data[el.id] = el.value;
             });
+            // Save Select ID specifically
+            data['si-type'] = document.getElementById('si-type').value;
+            
             const dynamicData = { parents: [], children: [], income: [], expense: [], family: [] };
             document.querySelectorAll('.family-member-row').forEach(row => dynamicData.family.push({ relation: row.querySelector('.relation-input').value, name: row.querySelector('.name-input').value, dob: row.querySelector('.dob-input').value }));
             document.querySelectorAll('.parent-row').forEach(row => dynamicData.parents.push({ type: row.querySelector('.p-type').value, age: row.querySelector('.p-age').value, money: row.querySelector('.p-money').value }));
@@ -359,6 +454,10 @@
                     for(let id in staticData) {
                         const el = document.getElementById(id);
                         if(el) { if(el.type === 'checkbox') el.checked = staticData[id]; else el.value = staticData[id]; }
+                    }
+                    if(staticData['si-type']) {
+                        document.getElementById('si-type').value = staticData['si-type'];
+                        updateSocialInsurance(); // Update link/note
                     }
                     syncPage2Visibility();
                 }
@@ -399,27 +498,6 @@
         function syncInsurance(val, targetId) { const target = document.getElementById(targetId); if(target && target.value !== val) target.value = val; calculateAll(); }
         function togglePages(pageId) { document.querySelectorAll('[id^="page"]').forEach(el => el.classList.add('hidden')); document.getElementById(pageId).classList.remove('hidden'); window.scrollTo(0, 0); if (pageId === 'page2') syncPage2Visibility(); }
         function syncPage2Visibility() { const map = {'check-sick': 'section-sick', 'check-disability': 'section-disability', 'check-death': 'section-death', 'check-retire': 'section-retire'}; for (let [cbId, secId] of Object.entries(map)) { const el = document.getElementById(secId); if(document.getElementById(cbId).checked) el.classList.remove('hidden'); else el.classList.add('hidden'); } }
-
-        function calculateAll() {
-            const fmt = n => parseFloat(n).toLocaleString('en-US'); const clean = str => parseFloat(String(str).replace(/,/g, '')) || 0;
-            document.querySelectorAll('.calc-row-sick').forEach(row => { const t = clean(row.querySelector('.sick-target').value); const c = clean(row.querySelector('.sick-current').value); row.querySelector('.sick-gap').innerText = fmt(Math.max(0, t - c)) + " 萬"; });
-            const disT = clean(document.getElementById('dis-target').value); const disC = clean(document.getElementById('dis-current').value); document.getElementById('dis-gap').innerHTML = `${fmt(Math.max(0, disT - disC))} <span class="text-lg">萬/月</span>`;
-            const rCur = clean(document.getElementById('retire-current-age').value); const rTar = clean(document.getElementById('retire-target-age').value) || 65; const rEnd = clean(document.getElementById('retire-end-age').value) || 85; const rMon = clean(document.getElementById('retire-monthly').value);
-            const yrSave = Math.max(0, rTar - rCur); const yrLive = Math.max(0, rEnd - rTar);
-            document.getElementById('retire-years-to-save').innerText = yrSave; document.getElementById('retire-years-to-live').innerText = yrLive;
-            const rTotal = rMon * 12 * yrLive; document.getElementById('retire-total-needed').innerText = fmt(Math.round(rTotal));
-            const rAnnual = yrSave > 0 ? rTotal / yrSave : rTotal; document.getElementById('retire-annual-save').innerText = fmt(rAnnual.toFixed(1));
-            let pTotal = 0; document.querySelectorAll('.parent-row').forEach(r => { const m = clean(r.querySelector('.p-money').value); const endAge = parseFloat(r.querySelector('.p-type').value); const curAge = clean(r.querySelector('.p-age').value); pTotal += m * 12 * Math.max(0, endAge - curAge); }); document.getElementById('total-parents').innerText = fmt(Math.round(pTotal));
-            const houseTotal = clean(document.getElementById('house-monthly').value) * 12 * clean(document.getElementById('house-years').value); document.getElementById('total-house').innerText = fmt(Math.round(houseTotal));
-            const tLiving = clean(document.getElementById('living-monthly').value) * 12 * clean(document.getElementById('living-years').value);
-            let tEdu = 0; document.querySelectorAll('.child-edu-row').forEach(r => { const a = clean(r.querySelector('.c-age').value); const d = parseFloat(r.querySelector('.c-degree').value); const type = r.querySelector('.c-type:checked').value; const k12Cost = type === 'public' ? CONFIG['pub-k12'] : CONFIG['pri-k12']; const uniCost = type === 'public' ? CONFIG['pub-uni'] : CONFIG['pri-uni']; const masCost = type === 'public' ? CONFIG['pub-mas'] : CONFIG['pri-mas']; if(a < 18 && d >= 18) tEdu += (18 - a) * k12Cost; if(a < 22 && d >= 22) tEdu += (22 - Math.max(18, a)) * uniCost; if(a < 24 && d >= 24) tEdu += (24 - Math.max(22, a)) * masCost; }); document.getElementById('total-living-edu').innerText = fmt(Math.round(tLiving + tEdu));
-            const deathNeed = pTotal + tLiving + tEdu + houseTotal; const laborSalary = clean(document.getElementById('labor-salary-p3').value); const laborBenefit = Math.round(laborSalary * 35 / 10000); document.getElementById('labor-benefit-val-p3').innerText = fmt(laborBenefit);
-            const group = clean(document.getElementById('group-insurance-p3').value); const comm = clean(document.getElementById('comm-insurance-p3').value); const deathGap = Math.max(0, deathNeed - (laborBenefit + group + comm));
-            document.getElementById('grand-total-gap').innerText = fmt(Math.round(deathGap)); document.getElementById('grand-total-gap').setAttribute('data-need', deathNeed);
-            let inc = 0, exp = 0; document.querySelectorAll('.income-amount').forEach(i => inc += clean(i.value)); document.querySelectorAll('.expense-amount').forEach(i => exp += clean(i.value)); const net = inc - exp; const netEl = document.getElementById('net-cashflow'); netEl.innerText = fmt(net) + " 萬"; netEl.className = `text-3xl font-black ${net >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
-            updateExpenseRow('房貸/房租', clean(document.getElementById('house-monthly').value) * 12); updateExpenseRow('孝親費', clean(document.querySelector('.p-money')?.value || 0) * 12);
-        }
-
         function addParentRow(typeVal, ageVal, moneyVal) { const div = document.createElement('div'); div.className = "parent-row flex gap-2 items-center text-sm mb-2"; div.innerHTML = `<select class="p-type border rounded p-2"><option value="76">父(平均壽命76)</option><option value="84">母(平均壽命84)</option></select><input type="number" class="p-age border rounded p-2 w-20" placeholder="歲" onchange="saveData()"><input type="number" class="p-money border rounded p-2 w-24" placeholder="月(萬)" onkeyup="calculateAll();saveData()" onchange="saveData()"><button onclick="this.parentElement.remove();calculateAll();saveData()" class="text-red-500 px-2"><i class="fas fa-trash"></i></button>`; document.getElementById('parents-container').appendChild(div); if(typeVal) div.querySelector('.p-type').value = typeVal; if(ageVal) div.querySelector('.p-age').value = ageVal; if(moneyVal) div.querySelector('.p-money').value = moneyVal; }
         function addChildEduRow(ageVal, degreeVal, typeVal) { const ts = Date.now() + Math.random(); const div = document.createElement('div'); div.className = "child-edu-row bg-slate-50 p-3 rounded-lg text-sm border border-slate-200"; div.innerHTML = `<div class="flex gap-2 mb-2"><input type="number" class="c-age w-full border rounded p-2" placeholder="歲" onkeyup="calculateAll();saveData()" onchange="saveData()"><select class="c-degree w-full border rounded p-2" onchange="calculateAll();saveData()"><option value="22">至大學畢業(22歲)</option><option value="24">至碩士畢業(24歲)</option></select></div><div class="flex justify-between items-center"><div class="space-x-3"><label class="inline-flex items-center"><input type="radio" name="e_${ts}" value="public" class="c-type mr-1" onchange="calculateAll();saveData()">公立</label><label class="inline-flex items-center"><input type="radio" name="e_${ts}" value="private" class="c-type mr-1" checked onchange="calculateAll();saveData()">私立</label></div><button onclick="this.closest('.child-edu-row').remove();calculateAll();saveData()" class="text-red-400 text-xs font-bold">刪除</button></div>`; document.getElementById('edu-container').appendChild(div); if(ageVal) div.querySelector('.c-age').value = ageVal; if(degreeVal) div.querySelector('.c-degree').value = degreeVal; if(typeVal) div.querySelector(`input[value="${typeVal}"]`).checked = true; }
         function addFlowRow(type, name, amount) { const tbody = document.getElementById(type + '-body'); const tr = document.createElement('tr'); const masterList = type === 'income' ? ['薪資收入', '年終獎金', '股利', '租金', '兼職', '投資', '其他'] : ['生活開銷', '交通', '房貸/房租', '保險', '孝親費', '教育', '娛樂', '雜支', '其他']; let opts = masterList.map(o => `<option value="${o}">${o}</option>`).join(''); tr.innerHTML = `<td data-label="項目"><select class="form-input ${type}-select" onchange="saveData()">${opts}</select></td><td data-label="金額"><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll();saveData()" onchange="saveData()"></td><td class="action-col"><button onclick="this.closest('tr').remove();calculateAll();saveData()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button></td>`; tbody.appendChild(tr); if(name) { const sel = tr.querySelector('select'); if(![...sel.options].some(o => o.value === name)) { const o = document.createElement('option'); o.value = name; o.text = name; sel.add(o); } sel.value = name; } if(amount) tr.querySelector('input').value = amount; }
@@ -441,7 +519,13 @@
                 const deathGap = document.getElementById('grand-total-gap').innerText + " 萬";
                 const retireGap = document.getElementById('retire-annual-save').innerText + " 萬/年";
                 const deathNeed = document.getElementById('grand-total-gap').getAttribute('data-need');
-                const labor = document.getElementById('labor-benefit-val-p3').innerText;
+                
+                // 社保資料抓取 (改用計算後的數據)
+                const siType = document.getElementById('si-type').value;
+                const siLabelMap = { labor: '勞保身故給付', gov: '公保死亡給付', farmer: '農保喪葬津貼', fisher: '漁保身故給付' };
+                const siLabel = siLabelMap[siType];
+                const siBenefit = document.getElementById('labor-benefit-val-p3').innerText; // 已經是萬單位
+
                 const group = document.getElementById('group-insurance-p3').value || 0;
                 const comm = document.getElementById('comm-insurance-p3').value || 0;
                 let inc = 0, exp = 0;
@@ -451,7 +535,9 @@
                 const netFmt = net.toLocaleString('en-US');
 
                 // 產圖
-                const chartImg = await generateChartAsync(deathNeed, labor, group, comm);
+                const chartImg = await generateChartAsync(deathNeed, 
+                    clean(siBenefit)*10000, // Pass actual value
+                    group, comm);
 
                 // 專家建議
                 let suggestionHTML = '';
@@ -461,7 +547,7 @@
                     suggestionHTML = `<div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;"><strong style="color:#dc2626;font-size:20px;">🔴 財務健康診斷：需要調整</strong><p style="margin-top:5px;opacity:0.8;font-size:15px;">目前的年度收支呈現緊繃狀態。理財的第一步是「收支平衡」，這將是我們首要解決的課題。</p></div><div><strong style="color:#991b1b;font-size:18px;display:block;margin-bottom:10px;">💡 專家規劃建議</strong><ul style="margin:0;padding-left:20px;line-height:1.6;font-size:15px;color:#334155;"><li><strong>現金流檢視</strong>：協助您檢視支出明細，找出調整空間。</li><li><strong>基礎保障優先</strong>：在預算有限下，優先規劃高槓桿的定期壽險與實支實付。</li><li><strong>風險轉嫁</strong>：避免因突發疾病導致家庭財務崩潰，保障是為了留住每一分錢。</li></ul></div>`;
                 }
 
-                // 2. 商業報告 HTML (Full Bleed Layout)
+                // 2. 商業報告 HTML
                 const htmlContent = `
                     <html>
                     <head>
@@ -469,53 +555,33 @@
                         <style>
                             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
                             body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                            
-                            /* 強制 A4 尺寸與無邊距 (Full Bleed) */
                             @page { size: A4; margin: 0; }
                             .page { width: 210mm; height: 296mm; overflow: hidden; page-break-after: always; position: relative; display: flex; flex-direction: column; background: white; }
-                            
-                            /* 封面 */
                             .cover-page { position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; display: flex; flex-direction: column; justify-content: center; padding-left: 30mm; box-sizing: border-box; }
                             .cover-line { width: 80px; height: 6px; background: #b45309; margin-bottom: 30px; }
                             .cover-title-group h1 { font-size: 54px; font-weight: 900; margin: 0; line-height: 1.2; }
                             .cover-sub { font-size: 20px; font-weight: 300; margin-bottom: 60px; letter-spacing: 2px; opacity: 0.9; }
-                            
-                            /* 內頁 Header */
                             .header-bar { height: 15mm; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; font-size: 12px; letter-spacing: 1px; flex-shrink: 0; }
                             .brand { font-weight: 900; color: #b45309; font-size: 14px; }
-                            
-                            /* 內頁內容區 (Flexbox 讓圖表自動填充) */
                             .content { padding: 15mm 20mm; flex: 1; display: flex; flex-direction: column; }
                             .page-title { font-size: 24px; font-weight: 900; color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; flex-shrink: 0; }
-                            
-                            /* Page 2: 儀表板 */
                             .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; flex-shrink: 0; }
                             .metric-card { background: #f8fafc; border-top: 4px solid #cbd5e1; padding: 15px 10px; text-align: center; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
                             .metric-title { font-size: 12px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
                             .metric-val { font-size: 20px; font-weight: 900; color: #0f172a; }
-                            
-                            /* 結構表 */
                             .table-container { margin-bottom: 20px; flex-shrink: 0; }
                             .clean-table { width: 100%; border-collapse: collapse; font-size: 13px; }
                             .clean-table th { text-align: left; padding: 10px; border-bottom: 2px solid #94a3b8; color: #475569; }
                             .clean-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
-                            
-                            /* Chart 自動填充 */
                             .chart-container { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
                             .chart-title { text-align: center; font-weight: bold; color: #475569; margin-bottom: 10px; }
                             .chart-img { width: 100%; height: 100%; object-fit: contain; max-height: 400px; }
-                            
-                            /* Page 3: 財務佈局 (左右分割) */
                             .split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; height: 100%; }
                             .fin-left { display: flex; flex-direction: column; gap: 20px; }
                             .fin-right { display: flex; flex-direction: column; }
-                            
                             .fin-dashboard { background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
                             .fin-score { font-size: 36px; font-weight: 900; color: ${net>=0 ? '#059669' : '#dc2626'}; margin: 10px 0; }
-                            
                             .advice-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-                            
-                            /* Footer */
                             .footer { height: 12mm; border-top: 1px solid #e2e8f0; margin: 0 20mm; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #94a3b8; flex-shrink: 0; }
                         </style>
                     </head>
@@ -533,44 +599,35 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="page">
                             <div class="header-bar"><span class="brand">POLARIS WEALTH</span><span>風險分析 Risk Analysis</span></div>
                             <div class="content">
                                 <div class="page-title">風險缺口總覽</div>
-                                
                                 <div class="dashboard">
                                     <div class="metric-card" style="border-color:#ef4444"><div class="metric-title">醫療缺口</div><div class="metric-val" style="color:#ef4444">${parseFloat(sickGap).toLocaleString()} 萬</div></div>
                                     <div class="metric-card" style="border-color:#f59e0b"><div class="metric-title">失能月缺口</div><div class="metric-val" style="color:#f59e0b">${disGap}</div></div>
                                     <div class="metric-card" style="border-color:#0f172a"><div class="metric-title">身故缺口</div><div class="metric-val" style="color:#0f172a">${deathGap}</div></div>
                                     <div class="metric-card" style="border-color:#b45309; background:#fffbeb"><div class="metric-title" style="color:#b45309">退休準備</div><div class="metric-val" style="color:#b45309">${retireGap}</div></div>
                                 </div>
-
                                 <div class="table-container">
                                     <div style="font-size:14px; font-weight:bold; color:#475569; margin-bottom:8px;">保障結構明細</div>
                                     <table class="clean-table">
                                         <tr><th width="35%">項目</th><th width="30%">預估金額</th><th>備註</th></tr>
                                         <tr><td><strong>家庭總責任</strong></td><td><strong>${parseFloat(deathNeed).toLocaleString()} 萬</strong></td><td>房貸、教育、生活費總和</td></tr>
-                                        <tr><td>(-) 勞保給付</td><td style="color:#059669;">- ${labor} 萬</td><td></td></tr>
+                                        <tr><td>(-) ${siLabel}</td><td style="color:#059669;">- ${siBenefit} 萬</td><td></td></tr>
                                         <tr><td>(-) 團保/撫卹</td><td style="color:#059669;">- ${parseFloat(group).toLocaleString()} 萬</td><td></td></tr>
                                         <tr><td>(-) 商業壽險</td><td style="color:#059669;">- ${parseFloat(comm).toLocaleString()} 萬</td><td>既有保單</td></tr>
                                         <tr style="background:#fee2e2;"><td style="color:#b91c1c; font-weight:bold;">需增補缺口</td><td style="color:#b91c1c; font-weight:bold;">${deathGap}</td><td>建議優先補足</td></tr>
                                     </table>
                                 </div>
-
-                                <div class="chart-container">
-                                    <div class="chart-title">家庭責任與保障走勢圖</div>
-                                    <img src="${chartImg}" class="chart-img">
-                                </div>
+                                <div class="chart-container"><div class="chart-title">家庭責任與保障走勢圖</div><img src="${chartImg}" class="chart-img"></div>
                             </div>
                             <div class="footer"><span>本報告僅供參考，實際理賠金額以保單條款為準</span><span>Page 1</span></div>
                         </div>
-
                         <div class="page">
                             <div class="header-bar"><span class="brand">POLARIS WEALTH</span><span>財務建議 Financial Advice</span></div>
                             <div class="content">
                                 <div class="page-title">財務收支與建議</div>
-                                
                                 <div class="split-layout">
                                     <div class="fin-left">
                                         <div class="fin-dashboard">
@@ -578,22 +635,12 @@
                                             <div class="fin-score">${netFmt} 萬</div>
                                             <div style="font-size:12px; opacity:0.6;">(收入 - 支出)</div>
                                         </div>
-                                        
                                         <div style="border:1px solid #e2e8f0; border-radius:8px; padding:20px;">
-                                            <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:10px;">
-                                                <span>年度總收入</span><span style="font-weight:bold; color:#059669;">${parseFloat(inc).toLocaleString()} 萬</span>
-                                            </div>
-                                            <div style="display:flex; justify-content:space-between;">
-                                                <span>年度總支出</span><span style="font-weight:bold; color:#dc2626;">${parseFloat(exp).toLocaleString()} 萬</span>
-                                            </div>
+                                            <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:10px;"><span>年度總收入</span><span style="font-weight:bold; color:#059669;">${parseFloat(inc).toLocaleString()} 萬</span></div>
+                                            <div style="display:flex; justify-content:space-between;"><span>年度總支出</span><span style="font-weight:bold; color:#dc2626;">${parseFloat(exp).toLocaleString()} 萬</span></div>
                                         </div>
                                     </div>
-
-                                    <div class="fin-right">
-                                        <div class="advice-box">
-                                            ${suggestionHTML}
-                                        </div>
-                                    </div>
+                                    <div class="fin-right"><div class="advice-box">${suggestionHTML}</div></div>
                                 </div>
                             </div>
                             <div class="footer"><span>本報告僅供參考，實際理賠金額以保單條款為準</span><span>Page 2</span></div>
@@ -610,7 +657,7 @@
             } catch (e) { alert('報告產出失敗：' + e.message); overlay.style.display = 'none'; }
         }
 
-        // Chart 生成 (包含智慧標註)
+        // Chart with Smart Labels
         function generateChartAsync(needVal, laborVal, groupVal, commVal) {
             return new Promise((resolve) => {
                 const canvas = document.getElementById('hidden-chart-canvas');
@@ -657,11 +704,8 @@
                                 if (dataset.label === '家庭責任遞減') {
                                     const meta = chart.getDatasetMeta(i);
                                     meta.data.forEach((bar, index) => {
-                                        const currentAge = labels[index];
-                                        if (index === 0 || currentAge % 5 === 0) {
-                                            const need = dataset.data[index];
-                                            const exist = existData[index];
-                                            const gap = need - exist;
+                                        if (index === 0 || labels[index] % 5 === 0) {
+                                            const gap = dataset.data[index] - existData[index];
                                             if (gap > 0) {
                                                 ctx.save(); ctx.fillStyle = '#dc2626'; ctx.font = 'bold 28px Arial'; ctx.textAlign = 'center';
                                                 ctx.fillText(gap.toLocaleString(), bar.x, bar.y - 15); ctx.restore();
