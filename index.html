@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 智能社保終極版)</title>
+    <title>全方位財富保障系統 Pro (2026 專業精簡版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -24,10 +24,8 @@
         .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); outline: none; }
         
         /* 社保選單專用樣式 */
-        .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 0.95rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .si-select { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; font-size: 0.95rem; font-weight: bold; color: #475569; width: 100%; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
         .si-select:hover { border-color: #3b82f6; }
-        .si-link { font-size: 0.8rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; margin-left: auto; font-weight: bold; padding: 2px 6px; border-radius: 4px; transition: background 0.2s; }
-        .si-link:hover { background-color: #eff6ff; text-decoration: none; }
 
         /* 手機版適配 */
         @media (max-width: 768px) {
@@ -300,15 +298,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                 <label class="text-xs font-bold text-slate-500 block mb-1">選擇保險身份</label>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <select id="si-type" class="si-select" onchange="updateSocialInsurance()">
-                                        <option value="labor">勞保 (一般勞工)</option>
-                                        <option value="gov">公保 (公教人員)</option>
-                                        <option value="farmer">農保 (農民)</option>
-                                        <option value="fisher">漁保 (漁會甲類)</option>
-                                    </select>
-                                    <a id="si-link" href="https://www.bli.gov.tw/0017462.html" target="_blank" class="si-link" title="前往官方計算公式"><i class="fas fa-external-link-alt mr-1"></i>官方公式</a>
-                                </div>
+                                <select id="si-type" class="si-select" onchange="updateSocialInsurance()">
+                                    <option value="labor">勞保 (一般勞工)</option>
+                                    <option value="gov">公保 (公教人員)</option>
+                                    <option value="farmer">農保 (農民)</option>
+                                    <option value="fisher">漁保 (漁會甲類)</option>
+                                </select>
                                 <label class="text-xs font-bold text-slate-500 block mb-2">投保薪資 / 保俸 (元/月)</label>
                                 <input type="number" id="labor-salary-p3" class="form-input font-bold persist-input" placeholder="例如: 45800" oninput="calculateAll();saveData()">
                                 <div class="text-xs font-bold text-blue-600 mt-2 flex justify-between"><span>身故給付：<span id="labor-benefit-val-p3">0</span> 萬</span></div>
@@ -331,12 +326,12 @@
         const DEFAULT_CONFIG = { 'pub-k12': 10, 'pri-k12': 30, 'pub-uni': 25, 'pri-uni': 50, 'pub-mas': 30, 'pri-mas': 60 };
         let CONFIG = { ...DEFAULT_CONFIG };
 
-        // Social Insurance Data
+        // Social Insurance Data (Note only)
         const SI_DATA = {
-            labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', url: 'https://www.bli.gov.tw/0017462.html' },
-            gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', url: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance/benefit-items-and-claiming-procedures/death-benefit' },
-            farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', url: 'https://www.bli.gov.tw/0006764.html', fixed: 20400 },
-            fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算', url: 'https://www.bli.gov.tw/0000008.html' }
+            labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算' },
+            gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算' },
+            farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400 },
+            fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算' }
         };
 
         function initSystem() {
@@ -351,10 +346,8 @@
             const type = document.getElementById('si-type').value;
             const data = SI_DATA[type];
             const input = document.getElementById('labor-salary-p3');
-            const link = document.getElementById('si-link');
             const note = document.getElementById('si-note');
 
-            link.href = data.url;
             note.innerText = data.note;
 
             if (type === 'farmer') {
