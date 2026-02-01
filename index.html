@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全方位財富保障系統 Pro (2026 最終修訂版)</title>
+    <title>全方位財富保障系統 Pro (2026 完美定稿版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -372,6 +372,7 @@
             if(!document.getElementById('si-type').value) {
                 document.getElementById('si-type').value = 'labor';
             }
+            // 修正：手動觸發一次以更新連結和備註
             updateSocialInsurance();
         }
 
@@ -472,8 +473,8 @@
             document.querySelectorAll('.persist-input').forEach(el => {
                 if(el.type === 'checkbox') data[el.id] = el.checked; else data[el.id] = el.value;
             });
-            // Save Select ID specifically
-            data['si-type'] = document.getElementById('si-type').value;
+            // NO LONGER SAVING SI-TYPE TO FORCE DEFAULT
+            // data['si-type'] = document.getElementById('si-type').value; 
             
             const dynamicData = { parents: [], children: [], income: [], expense: [], family: [] };
             document.querySelectorAll('.family-member-row').forEach(row => dynamicData.family.push({ relation: row.querySelector('.relation-input').value, name: row.querySelector('.name-input').value, dob: row.querySelector('.dob-input').value }));
@@ -492,16 +493,12 @@
                         const el = document.getElementById(id);
                         if(el) { if(el.type === 'checkbox') el.checked = staticData[id]; else el.value = staticData[id]; }
                     }
-                    if(staticData['si-type']) {
+                    // REMOVED LOADING SI-TYPE TO FORCE DEFAULT
+                    /* if(staticData['si-type']) {
                         document.getElementById('si-type').value = staticData['si-type'];
-                    } else {
-                        document.getElementById('si-type').value = 'labor'; // Default fallback
-                    }
-                    updateSocialInsurance(); // Update link/note based on loaded or default
+                    } */
+                    updateSocialInsurance(); // Update link/note based on default
                     syncPage2Visibility();
-                } else {
-                    document.getElementById('si-type').value = 'labor';
-                    updateSocialInsurance();
                 }
                 const dynamicData = JSON.parse(localStorage.getItem('pwm_data_dynamic'));
                 if(dynamicData) {
