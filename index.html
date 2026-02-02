@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 (2026 責任遞減版)</title>
+    <title>倍安保險需求分析系統 (2026 責任遞減終極版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -226,12 +226,14 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-emerald-600 text-lg">年度收入概況</h3><button onclick="addFlowRow('income')" class="w-full text-sm bg-emerald-50 text-emerald-600 font-bold px-4 py-3 rounded-xl hover:bg-emerald-100 transition border border-emerald-100 cursor-pointer">+ 新增收入項目</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-emerald-600 text-lg">年度收入概況</h3></div>
                         <table class="w-full financial-table mb-4"><tbody id="income-body"></tbody></table>
+                        <button onclick="addFlowRow('income')" class="w-full mt-4 py-3 bg-emerald-50 text-emerald-600 font-bold rounded-xl hover:bg-emerald-100 transition border border-emerald-100 cursor-pointer text-base flex justify-center items-center"><i class="fas fa-plus-circle mr-2"></i>新增收入項目</button>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-red-500 text-lg">年度支出概況</h3><button onclick="addFlowRow('expense')" class="w-full text-sm bg-red-50 text-red-600 font-bold px-4 py-3 rounded-xl hover:bg-red-100 transition border border-red-100 cursor-pointer">+ 新增支出項目</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-red-500 text-lg">年度支出概況</h3></div>
                         <table class="w-full financial-table mb-4"><tbody id="expense-body"></tbody></table>
+                        <button onclick="addFlowRow('expense')" class="w-full mt-4 py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition border border-red-100 cursor-pointer text-base flex justify-center items-center"><i class="fas fa-plus-circle mr-2"></i>新增支出項目</button>
                     </div>
                 </div>
 
@@ -274,7 +276,7 @@
             { id: 'senior', name: '高中', years: 3, minAge: 15, maxAge: 18 }, 
             { id: 'university', name: '大學', years: 4, minAge: 18, maxAge: 22 } 
         ];
-        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年(30個月)', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定 20,400 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定 19,761 x 5個月', fixed: 19761, tableUrl: null } };
+        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定月投保金額 19,761元 x 5個月', fixed: 19761, tableUrl: null } };
 
         let parentMemory = {};
 
@@ -347,7 +349,6 @@
         window.populateDeathNeeds = function() {
             if(!document.getElementById('check-death').checked) return;
             
-            // 記憶父母資料
             document.querySelectorAll('.parent-row').forEach(row => {
                 const name = row.querySelector('.p-name').innerText;
                 const expectancy = row.querySelector('.p-type').value;
@@ -409,7 +410,7 @@
         window.addParentRow = function(n, a, t, m) { 
             const d=document.createElement('div'); 
             d.className="flex gap-4 mb-2 items-center bg-slate-50 p-3 rounded-lg border border-slate-200 parent-row"; 
-            d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700 p-name">${n}</div><div class="text-xs text-slate-400">${a}歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${t||80}" oninput="calculateAll()"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()" value="${m||''}" placeholder="0"></div></div><input type="hidden" class="p-age" value="${a||0}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500 cursor-pointer"><i class="fas fa-trash"></i></button>`; 
+            d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700 p-name">${n}</div><div class="text-xs text-slate-400">${a}歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${t||80}" oninput="calculateAll()"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()" value="${m||''}" placeholder="0"></div></div><input type="hidden" class="p-age" value="${a||0}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button>`; 
             document.getElementById('parents-container').appendChild(d); 
         }
         
@@ -571,14 +572,10 @@
                             const stageId = row.dataset.stage;
                             const stageInfo = EDU_STAGES.find(s => s.id === stageId);
                             
-                            // Calculate overlap of [childAgeAtI, infinity] and [stageMin, stageMax]
                             const start = Math.max(childAgeAtI, stageInfo.minAge);
                             const end = stageInfo.maxAge;
                             const duration = Math.max(0, end - start);
                             
-                            // Use stage years as upper bound for duration? 
-                            // The original `dataset.years` is relative to CURRENT age.
-                            // Here we re-calculate strictly based on age boundaries.
                             const cost = (CONFIG[input.value+'-'+stageId] || 0);
                             eVal += cost * Math.min(duration, stageInfo.years); 
                         });
