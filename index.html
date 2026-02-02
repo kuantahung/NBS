@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 (2026 旗艦視覺版)</title>
+    <title>倍安保險需求分析系統 (2026 責任遞減版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺風格 --- */
+        /* --- 視覺風格：經典深藍漸層 + 毛玻璃 --- */
         body { font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif; background-color: #f1f5f9; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15); }
@@ -274,7 +274,7 @@
             { id: 'senior', name: '高中', years: 3, minAge: 15, maxAge: 18 }, 
             { id: 'university', name: '大學', years: 4, minAge: 18, maxAge: 22 } 
         ];
-        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定月投保金額 19,761元 x 5個月', fixed: 19761, tableUrl: null } };
+        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年(30個月)', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定 20,400 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定 19,761 x 5個月', fixed: 19761, tableUrl: null } };
 
         let parentMemory = {};
 
@@ -347,6 +347,7 @@
         window.populateDeathNeeds = function() {
             if(!document.getElementById('check-death').checked) return;
             
+            // 記憶父母資料
             document.querySelectorAll('.parent-row').forEach(row => {
                 const name = row.querySelector('.p-name').innerText;
                 const expectancy = row.querySelector('.p-type').value;
@@ -392,26 +393,23 @@
                     stagesHTML += `<div class="edu-stage-row" data-stage="${s.id}" data-years="${y}"><div class="text-sm font-bold text-slate-600">${s.name} <span class="text-xs text-slate-400">(${y}年)</span></div><div><input type="radio" name="edu_${uid}" value="pub" id="pub_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()"><label for="pub_${uid}" class="edu-toggle-label">公立</label></div><div><input type="radio" name="edu_${uid}" value="pri" id="pri_${uid}" class="hidden edu-toggle-input" onchange="calculateAll()" checked><label for="pri_${uid}" class="edu-toggle-label">私立</label></div></div>`;
                 }
             });
-            if(hasStage) document.getElementById('edu-container').insertAdjacentHTML('beforeend', `<div class="edu-child-card bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4"><div class="flex justify-between font-bold text-slate-700 mb-2 border-b pb-2"><span>${name} (${age}歲)</span><div class="flex items-center"><span class="text-blue-600 mr-4">小計: <span class="child-subtotal">0</span> 萬</span><button onclick="this.closest('.edu-child-card').remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt"></i></button></div></div>${stagesHTML}</div>`);
+            if(hasStage) document.getElementById('edu-container').insertAdjacentHTML('beforeend', `<div class="edu-child-card bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4"><div class="flex justify-between font-bold text-slate-700 mb-2 border-b pb-2"><span>${name} (${age}歲)</span><div class="flex items-center"><span class="text-blue-600 mr-4">小計: <span class="child-subtotal">0</span> 萬</span><button onclick="this.closest('.edu-child-card').remove();calculateAll()" class="text-slate-400 hover:text-red-500 cursor-pointer"><i class="fas fa-trash-alt"></i></button></div></div>${stagesHTML}</div>`);
         }
 
-        window.addManualEduRow = function() {
-             renderEduCard('子女 (手動)', 0);
-             calculateAll();
-        }
+        window.addManualEduRow = function() { renderEduCard('子女 (手動)', 0); calculateAll(); }
 
         window.addFamilyMember = function() { 
             const container = document.getElementById('family-container');
             const d=document.createElement('div'); 
             d.className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200 relative animate-fade-in family-member-row"; 
-            d.innerHTML=`<div class="md:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">關係</label><select class="form-input fam-rel"><option>配偶</option><option>子</option><option>女</option><option>父</option><option>母</option><option>祖父母</option></select></div><div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">姓名</label><input type="text" class="form-input name-input"></div><div class="md:col-span-4"><label class="block text-xs font-bold text-slate-500 mb-1">出生年月日</label><input type="date" class="form-input dob-input fam-dob" onchange="updateAge(this)"></div><div class="md:col-span-3 relative"><label class="block text-xs font-bold text-slate-500 mb-1">保險年齡</label><div class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 border border-slate-200 age-display">-- 歲</div><button onclick="this.closest('.grid').remove();calculateAll()" class="absolute -top-2 -right-2 text-red-400 hover:text-red-600 cursor-pointer"><i class="fas fa-times-circle"></i></button></div>`; 
+            d.innerHTML=`<div class="md:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">關係</label><select class="form-input fam-rel"><option>配偶</option><option>子</option><option>女</option><option>父</option><option>母</option><option>祖父母</option></select></div><div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">姓名</label><input type="text" class="form-input name-input"></div><div class="md:col-span-4"><label class="block text-xs font-bold text-slate-500 mb-1">出生年月日</label><input type="date" class="form-input dob-input fam-dob" onchange="updateAge(this)"></div><div class="md:col-span-3 relative"><label class="block text-xs font-bold text-slate-500 mb-1">保險年齡</label><div class="bg-white p-3 rounded-lg text-center font-bold text-slate-800 border border-slate-200 age-display">-- 歲</div><button type="button" onclick="this.closest('.grid').remove();calculateAll()" class="absolute -top-2 -right-2 text-red-400 hover:text-red-600 cursor-pointer"><i class="fas fa-times-circle"></i></button></div>`; 
             container.appendChild(d); 
         }
 
         window.addParentRow = function(n, a, t, m) { 
             const d=document.createElement('div'); 
             d.className="flex gap-4 mb-2 items-center bg-slate-50 p-3 rounded-lg border border-slate-200 parent-row"; 
-            d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700 p-name">${n}</div><div class="text-xs text-slate-400">${a}歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${t||80}" oninput="calculateAll()"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()" value="${m||''}" placeholder="0"></div></div><input type="hidden" class="p-age" value="${a||0}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button>`; 
+            d.innerHTML=`<div class="w-20 text-center"><div class="font-bold text-slate-700 p-name">${n}</div><div class="text-xs text-slate-400">${a}歲</div></div><div class="flex-1 grid grid-cols-2 gap-2"><div><label class="text-[10px] text-slate-400 block">預估壽命</label><input type="number" class="p-type form-input h-8 text-sm" value="${t||80}" oninput="calculateAll()"></div><div><label class="text-[10px] text-slate-400 block">月孝養(萬)</label><input type="number" class="p-money form-input h-8 text-sm" oninput="calculateAll()" value="${m||''}" placeholder="0"></div></div><input type="hidden" class="p-age" value="${a||0}"><button onclick="this.parentElement.remove();calculateAll()" class="text-slate-400 hover:text-red-500 cursor-pointer"><i class="fas fa-trash"></i></button>`; 
             document.getElementById('parents-container').appendChild(d); 
         }
         
@@ -421,7 +419,7 @@
             const current=Array.from(document.querySelectorAll(`.${type}-select`)).map(s=>s.value); 
             const avail=master.filter(i=>!current.includes(i)); 
             if(avail.length===0){alert('已無更多選項');return;} 
-            tr.innerHTML=`<td><select class="form-input ${type}-select" onchange="calculateAll()">${avail.map(o=>`<option>${o}</option>`).join('')}</select></td><td><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll()"></td><td class="text-right"><button onclick="this.closest('tr').remove();calculateAll()" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash"></i></button></td>`; 
+            tr.innerHTML=`<td><select class="form-input ${type}-select" onchange="calculateAll()">${avail.map(o=>`<option>${o}</option>`).join('')}</select></td><td><input type="number" class="form-input ${type}-amount" placeholder="0" onkeyup="calculateAll()"></td><td class="text-right"><button onclick="this.closest('tr').remove();calculateAll()" class="text-slate-300 hover:text-red-400 cursor-pointer"><i class="fas fa-trash"></i></button></td>`; 
             document.getElementById(type+'-body').appendChild(tr); 
             if(name){ tr.querySelector('select').value=name; } if(amount){ tr.querySelector('input').value=amount; } 
         }
@@ -489,6 +487,7 @@
             const firstParentMoney = document.querySelector('.p-money'); if(firstParentMoney) updateExpenseRow('孝親費', clean(firstParentMoney.value||0)*12);
         }
 
+        // PDF Generation
         window.generateReport = async function() {
             try {
                 calculateAll();
@@ -526,58 +525,65 @@
                 const exist = clean(siVal)+clean(grpVal)+clean(commVal);
                 const labels=[], dNeed=[], dExist=[], dParents=[], dEdu=[], dLiving=[], dHouse=[];
                 
-                // Stacked Bar Logic
+                // Stacked Bar Logic (Decreasing Responsibility)
                 for(let i=age; i<=rAge; i++) { 
                     labels.push(i);
                     const elapsed = i - age;
                     
-                    // Parents
+                    // 1. Parents Lump Sum
                     let pVal = 0;
                     document.querySelectorAll('.parent-row').forEach(r => {
                         const m = clean(r.querySelector('.p-money').value);
                         const t = clean(r.querySelector('.p-type').value);
                         const a = clean(r.querySelector('.p-age').value);
-                        if ((t - (a+elapsed)) > 0) pVal += m * 12;
+                        const parentAgeAtI = a + elapsed;
+                        const remaining = Math.max(0, t - parentAgeAtI);
+                        pVal += m * 12 * remaining;
                     });
-                    dParents.push(pVal);
+                    dParents.push(Math.round(pVal));
 
-                    // Living
+                    // 2. Living Lump Sum
                     let lVal = 0;
                     const lY = clean(document.getElementById('living-years').value);
                     const lM = clean(document.getElementById('living-monthly').value);
-                    if (lY - elapsed > 0) lVal += lM * 12;
-                    dLiving.push(lVal);
+                    const livingRemaining = Math.max(0, lY - elapsed);
+                    lVal += lM * 12 * livingRemaining;
+                    dLiving.push(Math.round(lVal));
 
-                    // House
+                    // 3. House Lump Sum
                     let hVal = 0;
                     const hY = clean(document.getElementById('house-years').value);
                     const hM = clean(document.getElementById('house-monthly').value);
-                    if (hY - elapsed > 0) hVal += hM * 12;
-                    dHouse.push(hVal);
+                    const houseRemaining = Math.max(0, hY - elapsed);
+                    hVal += hM * 12 * houseRemaining;
+                    dHouse.push(Math.round(hVal));
 
-                    // Edu
+                    // 4. Education Lump Sum
                     let eVal = 0;
                     document.querySelectorAll('.edu-child-card').forEach(card => {
+                        const headerText = card.querySelector('.font-bold').innerText; 
+                        const match = headerText.match(/\((\d+)歲\)/);
+                        const childCurrentAge = match ? parseInt(match[1]) : 0;
+                        const childAgeAtI = childCurrentAge + elapsed;
+
                         card.querySelectorAll('.edu-toggle-input:checked').forEach(input => {
                             const row = input.closest('.edu-stage-row');
-                            const stage = row.dataset.stage;
-                            const y = parseFloat(row.dataset.years) || 0;
-                            // Calculate overlap between (now + elapsed) and (now + y) is wrong.
-                            // Simplified logic: linear draw down or lump sum presence?
-                            // Let's assume education fund is needed *now* for future. 
-                            // If death happens at year X, we need money for remaining years.
-                            // Remaining years for a stage = max(0, y - elapsed).
-                            // But wait, stages are sequential. This complex logic is hard to replicate exactly without full child age data.
-                            // Fallback: Proportional drop based on total education years approx 22-age.
-                            // Let's use the same logic as "Total Need" linear drop for Edu for visual simplicity, 
-                            // OR just sum the remaining years if we can.
-                            // Actually, simpler: just calculate the cost for *remaining* duration.
-                            const cost = (CONFIG[input.value+'-'+stage] || 0);
-                            const remainingY = Math.max(0, y - elapsed);
-                            if(remainingY > 0) eVal += cost; // Approximate: 1 year cost if still in that stage timeframe
+                            const stageId = row.dataset.stage;
+                            const stageInfo = EDU_STAGES.find(s => s.id === stageId);
+                            
+                            // Calculate overlap of [childAgeAtI, infinity] and [stageMin, stageMax]
+                            const start = Math.max(childAgeAtI, stageInfo.minAge);
+                            const end = stageInfo.maxAge;
+                            const duration = Math.max(0, end - start);
+                            
+                            // Use stage years as upper bound for duration? 
+                            // The original `dataset.years` is relative to CURRENT age.
+                            // Here we re-calculate strictly based on age boundaries.
+                            const cost = (CONFIG[input.value+'-'+stageId] || 0);
+                            eVal += cost * Math.min(duration, stageInfo.years); 
                         });
                     });
-                    dEdu.push(eVal);
+                    dEdu.push(Math.round(eVal));
 
                     dExist.push(exist); 
                 }
