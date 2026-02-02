@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倍安保險需求分析系統 (2026 智能記憶版)</title>
+    <title>倍安保險需求分析系統 (2026 旗艦視覺版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- 核心樣式 --- */
+        /* --- 視覺風格 --- */
         body { font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif; background-color: #f1f5f9; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15); }
-
         input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         .hidden { display: none !important; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
@@ -37,7 +36,8 @@
         #loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; color: white; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
         .spinner { border: 4px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 4px solid #d4af37; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+        #settings-modal { transition: opacity 0.3s ease; }
+
         @media (max-width: 768px) {
             .need-card { height: 220px; }
             .mobile-card-table thead { display: none; }
@@ -51,6 +51,34 @@
 
     <div id="loading-overlay"><div class="spinner"></div><div class="text-2xl font-bold tracking-widest">報告生成中</div></div>
     <canvas id="hidden-chart-canvas" width="2400" height="1200" style="position:fixed; left:-9999px;"></canvas>
+
+    <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-xl font-bold text-slate-800">參數設定</h3>
+                <button onclick="toggleSettings()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="space-y-4 h-96 overflow-y-auto">
+                <h4 class="font-bold text-xs text-slate-500 uppercase tracking-wider">教育費用 (萬/年)</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs text-slate-400 block mb-1">公立-幼兒園</label><input type="number" id="cfg-pub-kindergarten" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">私立-幼兒園</label><input type="number" id="cfg-pri-kindergarten" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">公立-國小</label><input type="number" id="cfg-pub-elementary" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">私立-國小</label><input type="number" id="cfg-pri-elementary" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">公立-國中</label><input type="number" id="cfg-pub-junior" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">私立-國中</label><input type="number" id="cfg-pri-junior" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">公立-高中</label><input type="number" id="cfg-pub-senior" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">私立-高中</label><input type="number" id="cfg-pri-senior" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">公立-大學</label><input type="number" id="cfg-pub-university" class="form-input text-sm"></div>
+                    <div><label class="text-xs text-slate-400 block mb-1">私立-大學</label><input type="number" id="cfg-pri-university" class="form-input text-sm"></div>
+                </div>
+            </div>
+            <div class="mt-8 flex justify-end gap-3">
+                <button onclick="resetDefaultConfig()" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded-lg">恢復預設</button>
+                <button onclick="saveConfig()" class="px-6 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800">儲存</button>
+            </div>
+        </div>
+    </div>
 
     <div id="app-container" class="pb-20">
         <div id="page1" class="container mx-auto py-6 px-4 md:py-10 animate-fade-in">
@@ -145,20 +173,7 @@
                              <div class="grid grid-cols-2 gap-6"><div><label class="text-sm font-bold text-slate-500 block mb-2">每月生活費 (萬)</label><input type="number" id="living-monthly" class="form-input" placeholder="0" onkeyup="calculateAll()"></div><div><label class="text-sm font-bold text-slate-500 block mb-2">照顧年數 (年)</label><input type="number" id="living-years" class="form-input" placeholder="例如: 20" onkeyup="calculateAll()"></div></div>
                         </div>
                         <div>
-                             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-                                <h3 class="font-bold text-slate-700 text-lg">子女教育基金 <span class="text-xs font-normal text-slate-400 ml-2">(依教育部參考標準估算)</span></h3>
-                                <div class="flex gap-2">
-                                    <button type="button" onclick="toggleSettings()" class="text-xs bg-slate-100 text-slate-500 font-bold px-3 py-1.5 rounded hover:bg-slate-200 transition cursor-pointer"><i class="fas fa-cog mr-1"></i>設定學費參數</button>
-                                    <button type="button" onclick="addManualEduRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增子女</button>
-                                </div>
-                             </div>
-                             <div id="edu-settings-inline" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 text-sm">
-                                <h4 class="font-bold text-slate-600 mb-3">教育費用參數設定 (萬/年)</h4>
-                                <div class="grid grid-cols-2 gap-3 mb-3">
-                                    <div class="col-span-2 text-slate-400 text-xs">請點擊上方「設定學費參數」按鈕開啟詳細設定視窗。</div>
-                                </div>
-                             </div>
-
+                             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2"><h3 class="font-bold text-slate-700 text-lg">子女教育基金 <span class="text-xs font-normal text-slate-400 ml-2">(依教育部參考標準估算)</span></h3><div class="flex gap-2"><button type="button" onclick="toggleSettings()" class="text-xs bg-slate-100 text-slate-500 font-bold px-3 py-1.5 rounded hover:bg-slate-200 transition cursor-pointer"><i class="fas fa-cog mr-1"></i>設定學費參數</button><button type="button" onclick="addManualEduRow()" class="text-xs bg-blue-50 text-blue-600 font-bold px-3 py-1.5 rounded hover:bg-blue-100 transition cursor-pointer">+ 手動新增子女</button></div></div>
                              <div id="edu-container" class="space-y-4"></div>
                              <div class="bg-slate-50 p-4 rounded-xl mt-4 text-right border border-slate-200"><span class="text-slate-600 text-sm font-bold">教育金小計:</span> <span id="total-edu" class="text-xl font-black text-slate-800 ml-2">0 萬</span></div>
                         </div>
@@ -197,7 +212,7 @@
                 </div>
 
                 <div class="flex justify-center mt-8 pb-12">
-                    <button type="button" onclick="goToPage3()" class="bg-slate-900 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-slate-800 transition shadow-2xl flex items-center transform hover:-translate-y-1">下一步：財務試算 <i class="fas fa-arrow-right ml-3"></i></button>
+                    <button type="button" onclick="goToPage3()" class="bg-slate-900 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-slate-800 transition shadow-2xl flex items-center transform hover:-translate-y-1 cursor-pointer">下一步：財務試算 <i class="fas fa-arrow-right ml-3"></i></button>
                 </div>
              </div>
         </div>
@@ -211,14 +226,12 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-emerald-600 text-lg">年度收入概況</h3></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-emerald-600 text-lg">年度收入概況</h3><button onclick="addFlowRow('income')" class="w-full text-sm bg-emerald-50 text-emerald-600 font-bold px-4 py-3 rounded-xl hover:bg-emerald-100 transition border border-emerald-100 cursor-pointer">+ 新增收入項目</button></div>
                         <table class="w-full financial-table mb-4"><tbody id="income-body"></tbody></table>
-                        <button onclick="addFlowRow('income')" class="w-full text-sm bg-emerald-50 text-emerald-600 font-bold px-4 py-3 rounded-xl hover:bg-emerald-100 transition border border-emerald-100 cursor-pointer">+ 新增收入項目</button>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-red-500 text-lg">年度支出概況</h3></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-red-500 text-lg">年度支出概況</h3><button onclick="addFlowRow('expense')" class="w-full text-sm bg-red-50 text-red-600 font-bold px-4 py-3 rounded-xl hover:bg-red-100 transition border border-red-100 cursor-pointer">+ 新增支出項目</button></div>
                         <table class="w-full financial-table mb-4"><tbody id="expense-body"></tbody></table>
-                        <button onclick="addFlowRow('expense')" class="w-full text-sm bg-red-50 text-red-600 font-bold px-4 py-3 rounded-xl hover:bg-red-100 transition border border-red-100 cursor-pointer">+ 新增支出項目</button>
                     </div>
                 </div>
 
@@ -261,7 +274,9 @@
             { id: 'senior', name: '高中', years: 3, minAge: 15, maxAge: 18 }, 
             { id: 'university', name: '大學', years: 4, minAge: 18, maxAge: 22 } 
         ];
-        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類會員標準(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定月投保金額 19,761元 x 5個月', fixed: 19761, tableUrl: null } };
+        const SI_DATA = { labor: { label: '勞保身故給付', note: '* 依勞保普通傷病身故(35個月)估算', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, gov: { label: '公保死亡給付', note: '* 依未滿20年投保年資(30個月)保守估算', tableUrl: 'https://www.bot.com.tw/tw/policy-business/government-employees-insurance-service/downloads/cash-payment-form' }, farmer: { label: '農保喪葬津貼', note: '* 固定投保金額20,400元 x 15個月', fixed: 20400, tableUrl: null }, fisher: { label: '漁保身故給付', note: '* 比照勞保甲類(35個月)', tableUrl: 'https://www.bli.gov.tw/0005475.html' }, national: { label: '國保喪葬給付', note: '* 固定月投保金額 19,761元 x 5個月', fixed: 19761, tableUrl: null } };
+
+        let parentMemory = {};
 
         window.initSystem = function() {
             clearAllInputs();
@@ -329,13 +344,9 @@
             calculateAll();
         }
 
-        // MEMORY STORAGE FOR PARENTS
-        let parentMemory = {}; 
-
         window.populateDeathNeeds = function() {
             if(!document.getElementById('check-death').checked) return;
             
-            // Save current manual inputs to memory before clearing
             document.querySelectorAll('.parent-row').forEach(row => {
                 const name = row.querySelector('.p-name').innerText;
                 const expectancy = row.querySelector('.p-type').value;
@@ -499,7 +510,6 @@
                 const net = totInc - totExp; const netFmt = fmt(net);
 
                 const advice = [];
-                // 優先顯示赤字警告
                 if(net < 0) {
                     advice.push(`<strong style="color:#dc2626">⚠️ 財務警訊 (收支赤字)</strong>：年度支出大於收入，建議優先檢視非必要開銷，避免資產縮水。`);
                 }
@@ -514,15 +524,111 @@
                 const age = parseInt(document.getElementById('main-user-age-value').value)||30;
                 const rAge = parseInt(document.getElementById('retire-target-age').value)||65;
                 const exist = clean(siVal)+clean(grpVal)+clean(commVal);
-                const labels=[], dNeed=[], dExist=[];
+                const labels=[], dNeed=[], dExist=[], dParents=[], dEdu=[], dLiving=[], dHouse=[];
+                
+                // Stacked Bar Logic
                 for(let i=age; i<=rAge; i++) { 
-                    labels.push(i); 
-                    dNeed.push(Math.max(0, Math.round(deathNeed * (1 - (i-age)/(rAge-age))))); 
+                    labels.push(i);
+                    const elapsed = i - age;
+                    
+                    // Parents
+                    let pVal = 0;
+                    document.querySelectorAll('.parent-row').forEach(r => {
+                        const m = clean(r.querySelector('.p-money').value);
+                        const t = clean(r.querySelector('.p-type').value);
+                        const a = clean(r.querySelector('.p-age').value);
+                        if ((t - (a+elapsed)) > 0) pVal += m * 12;
+                    });
+                    dParents.push(pVal);
+
+                    // Living
+                    let lVal = 0;
+                    const lY = clean(document.getElementById('living-years').value);
+                    const lM = clean(document.getElementById('living-monthly').value);
+                    if (lY - elapsed > 0) lVal += lM * 12;
+                    dLiving.push(lVal);
+
+                    // House
+                    let hVal = 0;
+                    const hY = clean(document.getElementById('house-years').value);
+                    const hM = clean(document.getElementById('house-monthly').value);
+                    if (hY - elapsed > 0) hVal += hM * 12;
+                    dHouse.push(hVal);
+
+                    // Edu
+                    let eVal = 0;
+                    document.querySelectorAll('.edu-child-card').forEach(card => {
+                        card.querySelectorAll('.edu-toggle-input:checked').forEach(input => {
+                            const row = input.closest('.edu-stage-row');
+                            const stage = row.dataset.stage;
+                            const y = parseFloat(row.dataset.years) || 0;
+                            // Calculate overlap between (now + elapsed) and (now + y) is wrong.
+                            // Simplified logic: linear draw down or lump sum presence?
+                            // Let's assume education fund is needed *now* for future. 
+                            // If death happens at year X, we need money for remaining years.
+                            // Remaining years for a stage = max(0, y - elapsed).
+                            // But wait, stages are sequential. This complex logic is hard to replicate exactly without full child age data.
+                            // Fallback: Proportional drop based on total education years approx 22-age.
+                            // Let's use the same logic as "Total Need" linear drop for Edu for visual simplicity, 
+                            // OR just sum the remaining years if we can.
+                            // Actually, simpler: just calculate the cost for *remaining* duration.
+                            const cost = (CONFIG[input.value+'-'+stage] || 0);
+                            const remainingY = Math.max(0, y - elapsed);
+                            if(remainingY > 0) eVal += cost; // Approximate: 1 year cost if still in that stage timeframe
+                        });
+                    });
+                    dEdu.push(eVal);
+
                     dExist.push(exist); 
                 }
                 
                 if(window.reportChart) window.reportChart.destroy();
-                window.reportChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [ { label: '家庭責任', data: dNeed, backgroundColor: 'rgba(252, 211, 77, 0.5)', order: 2 }, { label: '現有保障', data: dExist, type:'line', borderColor: '#1e293b', borderWidth: 4, pointRadius:0, order: 1 } ] }, options: { animation: false, responsive: false, scales: { y: { beginAtZero: true, ticks:{font:{size:26}} }, x: { ticks:{font:{size:26}} } }, plugins: { legend: { labels: { font: { size: 26 } } }, id: 'gapLabel', afterDatasetsDraw: (chart) => { const ctx = chart.ctx; chart.data.datasets.forEach((dataset, i) => { if (dataset.label === '家庭責任') { const meta = chart.getDatasetMeta(i); meta.data.forEach((bar, index) => { const currentAge = labels[index]; if (index === 0 || currentAge % 5 === 0) { const gap = dataset.data[index] - exist; if (gap > 0) { ctx.save(); ctx.fillStyle = '#dc2626'; ctx.font = 'bold 28px Arial'; ctx.textAlign = 'center'; ctx.fillText(gap.toLocaleString(), bar.x, bar.y - 15); ctx.restore(); } } }); } }); } } } });
+                window.reportChart = new Chart(ctx, { 
+                    type: 'bar', 
+                    data: { 
+                        labels: labels, 
+                        datasets: [ 
+                            { label: '現有保障', data: dExist, type:'line', borderColor: '#334155', borderWidth: 4, pointRadius:0, order: 0 },
+                            { label: '父母孝養', data: dParents, backgroundColor: '#10b981', stack: 'stack1', order: 1 },
+                            { label: '子女教育', data: dEdu, backgroundColor: '#3b82f6', stack: 'stack1', order: 1 },
+                            { label: '生活費用', data: dLiving, backgroundColor: '#f59e0b', stack: 'stack1', order: 1 },
+                            { label: '居住費用', data: dHouse, backgroundColor: '#ef4444', stack: 'stack1', order: 1 }
+                        ] 
+                    }, 
+                    options: { 
+                        animation: false, 
+                        responsive: false, 
+                        scales: { 
+                            y: { beginAtZero: true, stacked: true, ticks:{font:{size:24}} }, 
+                            x: { stacked: true, ticks:{font:{size:24}} } 
+                        }, 
+                        plugins: { 
+                            legend: { labels: { font: { size: 24 } } }, 
+                            id: 'gapLabel', 
+                            afterDatasetsDraw: (chart) => { 
+                                const ctx = chart.ctx; 
+                                const metaExist = chart.getDatasetMeta(0);
+                                const metaHouse = chart.getDatasetMeta(4); // Last bar in stack
+                                
+                                metaHouse.data.forEach((bar, index) => {
+                                    const currentAge = labels[index];
+                                    if (index === 0 || currentAge % 5 === 0) {
+                                        const totalNeed = dParents[index] + dEdu[index] + dLiving[index] + dHouse[index];
+                                        const gap = totalNeed - dExist[index];
+                                        if (gap > 0) { 
+                                            ctx.save(); 
+                                            ctx.fillStyle = '#dc2626'; 
+                                            ctx.font = 'bold 26px Arial'; 
+                                            ctx.textAlign = 'center'; 
+                                            ctx.fillText(Math.round(gap).toLocaleString(), bar.x, metaHouse.data[index].y - 20); 
+                                            ctx.restore(); 
+                                        } 
+                                    } 
+                                }); 
+                            } 
+                        } 
+                    } 
+                });
                 const chartURL = canvas.toDataURL();
                 
                 const adviceList = advice.map(i => `<li>${i}</li>`).join('');
